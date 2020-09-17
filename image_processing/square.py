@@ -24,17 +24,24 @@ for filename in os.listdir(directory + '/raw_images'):
         else:
             img_square = ImageOps.expand(img_raw, border=(0,border_size), fill='white')
 
-        # add FNA Vol. 23 citation to bottom right corner
+        # Add citation text over white box, scaled to image size
+        font_size = int(max_dim/37) # 20pt font @ 747x747 (first test image)
+        position = (int(max_dim - 11.5*font_size), 
+                    int(max_dim - 2.85*font_size))
+        box_shape = [(position[0] - 5, position[1] - 5), 
+                      (max_dim, max_dim)]
+        
+            # add white box (FNA Vol. 23 citation will go over this) 
+        text_box = ImageDraw.Draw(img_square)
+        text_box.rectangle(box_shape, fill='white')
+        
+            # add FNA Vol. 23 citation to bottom right corner
         citation = ImageDraw.Draw(img_square)
-        font = ImageFont.truetype('ARI.ttf', size=20)
-        # x,y need to be 498 690 for 747x747, i.e. citation is 249 x 57
-        (x,y) = ((max_dim-230), (max_dim - 57))
+        font = ImageFont.truetype('ARI.ttf', size=font_size) # scale with image size
         message = 'FNA Vol. 23\nOxford University Press'
+        citation.text(position, message, fill='black', font=font)
 
-        citation.text((x,y), message, fill='black', font=font)
-
-
-        # save square image at full resolution in directory: full_res/
+            # save square image at full resolution in directory: full_res/
         path_full_res = 'full_res/' + str(os.path.splitext(filename)[0]) + '_full_res.png'
         img_square.save(path_full_res)
 
