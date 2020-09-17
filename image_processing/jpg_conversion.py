@@ -7,7 +7,7 @@ for filename in os.listdir(directory):
     if filename.endswith('.png'):
         print(filename)
         img = Image.open(directory + filename)
-        img.load() # required for png.split()
+        img.load() # required for img.split()
         
         # replace alpha channel background
         background = Image.new("RGB", img.size, (255, 255, 255))
