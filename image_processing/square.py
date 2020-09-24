@@ -41,7 +41,24 @@ for filename in os.listdir(directory + '/raw_images'):
         message = 'FNA Vol. 23\nOxford University Press'
         citation.text(position, message, fill='black', font=font)
 
-            # save square image at full resolution in directory: full_res/
+
+        # Add illustration title to top left corner
+        title_name = str(os.path.splitext(filename)[0]).replace('_', ' ').capitalize()
+        font_size_title = int(font_size*1.75)
+        
+            # add white box under text
+            # use length of title to determine text box size 
+        title_box_shape = [(0,0),
+                           (int((len(title_name)*font_size)/1.1), 
+                           int(font_size_title*1.25))]
+        title_box = ImageDraw.Draw(img_square)
+        title_box.rectangle(title_box_shape, fill='white')
+            # insert text over white box
+        title = ImageDraw.Draw(img_square)
+        font = ImageFont.truetype('ARI.ttf', size=font_size_title)
+        title.text((10,0), title_name, fill='black', font = font)
+
+        # save square image at full resolution in directory: full_res/
         path_full_res = 'full_res/' + str(os.path.splitext(filename)[0]) + '_full_res.png'
         img_square.save(path_full_res)
 
