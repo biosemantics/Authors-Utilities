@@ -9,62 +9,70 @@ library(stringr)
 library(fuzzyjoin)
 library(xlsx)
 
-# color data
+# source functions from palette functions
+source('palette_functions.R')
 
-read_excel_allsheets <- function(filename, tibble = FALSE) {
-  # I prefer straight data.frames
-  # but if you like tidyverse tibbles (the default with read_excel)
-  # then just pass tibble = TRUE
-  sheets <- readxl::excel_sheets(filename)
-  x <- lapply(sheets, function(X) readxl::read_excel(filename, sheet = X))
-  if(!tibble) x <- lapply(x, as.data.frame)
-  names(x) <- sheets
-  x
-}
+# prep data to run in color_strings()
 
+# for param: measurements
 measurements <- read_excel_allsheets('data/colour_between_species_2020Dec04.xlsm')
+
+# keep just first two words of Species (genus, epithet)
+species_name <- function(x){
+  x <- mutate(x, Species = word(x$Species, 1, 2, sep = "_"))
+  x <- mutate(x, Species = str_replace(x$Species, "_", " "))
+  return(x)
+}
+measurements <- lapply(measurements, function(x) species_name(x))
+
+# new RGB samples for some species -- update measurements with these
+measurements_resampled <- read_excel_allsheets('data/resampled_data_2021-02-13.xlsm')
+measurements_resampled <- lapply(measurements_resampled, function(x) select(x, Species, 
+                                                  Red = R,
+                                                  Green = G,
+                                                  Blue = B))
+
+# list of label data frames (param: labels)
 labs <- read_excel_allsheets('data/colour_between_species_labs.xlsm')
 
+# run 
+resample <- color_strings(measurements_resampled, labs)
+original_measurements <- color_strings(measurements, labs)
 
-# exclude unnecessary columns
-measurements <- lapply(measurements, function(x) select(x, Species, Red, Green, Blue))
-labs <- lapply(labs, function(x) select(x, Species, Colour...2))
+# replace rows in original_measurements with matching resampled rows in resample
+filter(original_measurements$Leaf, 
+       !(original_measurements$Leaf$Species %in% resample$Leaf_2$Species))
 
-# align labels in labs to measurements
-  # get just epithet from each species name for partial match with measurements$Species
-labs <- lapply(labs,
-               function(x) mutate(x, 
-                                  'epithet' = str_remove(x$Species, 'Carex ')))
 
-  # change order of labs list to match measurements
-labs <- labs[c('Leaf', 'Male Scale', 'Perigynium', 'Female Scale', 'Cataphyll')]
-
-  # inner_join by partial string match, iterated over each df 
-for (df in 1:length(measurements)) {
-  measurements[[df]] <- regex_inner_join(measurements[[df]], labs[[df]],
-                                       by = c(Species = 'epithet'))
+update_measurements <- function(original, new_samples){
+  keep <- filter(original, !(original$Species %in% new_samples$Species))
+  updated <- bind_rows(keep, new_samples)
+  return(updated)
 }
 
-  # clean up
-measurements <- lapply(measurements, function(x) select(x, Species = Species.x, 
-                                                        Species.y, 
-                                                        Red, Green, Blue, 
-                                                        Colour))
+# update original meaurements with resampled species
+updated <- list()
+updated$Leaf <- 
+  update_measurements(original_measurements$Leaf, resample$Leaf_2)
+updated$'Male Scale' <- 
+  update_measurements(original_measurements$`Male Scale`, resample$`Male Scale_2`)
+updated$Perigynium <- 
+  update_measurements(original_measurements$Perigynium, resample$Perigynium_2)
+updated$'Female Scale' <- 
+  update_measurements(original_measurements$`Female Scale`, resample$`Female Scale_2`)
+updated$Cataphyll <- 
+  update_measurements(original_measurements$Cataphyll, resample$Cataphyll_2)
 
-# sort colors by luminance, decreasing
-measurements <- lapply(measurements, 
-                       function(x) mutate(x, 
-                                          luminance = 0.299*Red+0.587*Green+0.114*Blue))
-measurements <- lapply(measurements, function(x) arrange(x, desc(luminance)))
 
-# export 
-write.xlsx(measurements$Leaf, file="data/colour_between_species_2020Dec21.xlsx", sheetName="Leaf", 
+
+# export
+write.xlsx(updated$Leaf, file="data/colour_between_species_2021Mar7.xlsx", sheetName="Leaf",
            append=TRUE)
-write.xlsx(measurements$`Male Scale`, file="data/colour_between_species_2020Dec21.xlsx", sheetName="Male Scale", 
+write.xlsx(updated$`Male Scale`, file="data/colour_between_species_2021Mar7.xlsx", sheetName="Male Scale",
            append=TRUE)
-write.xlsx(measurements$Perigynium, file="data/colour_between_species_2020Dec21.xlsx", sheetName="Perigynium", 
+write.xlsx(updated$Perigynium, file="data/colour_between_species_2021Mar7.xlsx", sheetName="Perigynium",
            append=TRUE)
-write.xlsx(measurements$`Female Scale`, file="data/colour_between_species_2020Dec21.xlsx", sheetName="Female Scale", 
+write.xlsx(updated$`Female Scale`, file="data/colour_between_species_2021Mar7.xlsx", sheetName="Female Scale",
            append=TRUE)
-write.xlsx(measurements$Cataphyll, file="data/colour_between_species_2020Dec21.xlsx", sheetName="Cataphyll", 
+write.xlsx(updated$Cataphyll, file="data/colour_between_species_2021Mar7.xlsx", sheetName="Cataphyll",
            append=TRUE)
