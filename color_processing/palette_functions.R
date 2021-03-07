@@ -23,6 +23,54 @@ read_excel_allsheets <- function(filename, tibble = FALSE) {
   x
 }
 
+# Function color_strings() ----
+#' param measurements: list of data frames with RGB measurements, missing color descriptions
+#' param labels: list of data frames with color descriptions given to different species
+#' returns measurements: input measurements updated with matching color descriptions
+
+color_strings <- function(measurements, labels){
+  
+  # exclude unnecessary columns
+  measurements <- lapply(measurements, function(x) select(x, Species, Red, Green, Blue))
+  labs <- lapply(labels, function(x) select(x, Species, Colour...2))
+  
+  # align labels in labs to measurements
+  # get just epithet from each species name for partial match with measurements$Species
+  labs <- lapply(labs,
+                 function(x) mutate(x, 
+                                    'epithet' = str_remove(x$Species, 'Carex ')))
+  
+  # change order of labs list to match measurements
+  labs <- labs[c('Leaf', 'Male Scale', 'Perigynium', 'Female Scale', 'Cataphyll')]
+  
+  # inner_join by partial string match, iterated over each df 
+  for (df in 1:length(measurements)) {
+    measurements[[df]] <- regex_inner_join(measurements[[df]], labs[[df]],
+                                           by = c(Species = 'epithet'))
+  }
+  
+  # clean up
+  measurements <- lapply(measurements, function(x) select(x, Species = Species.x, 
+                                                          Species.y, 
+                                                          Red, Green, Blue, 
+                                                          Colour))
+  
+  # sort colors by luminance, decreasing
+  measurements <- lapply(measurements, 
+                         function(x) mutate(x, 
+                                            luminance = 0.299*Red+0.587*Green+0.114*Blue))
+  measurements <- lapply(measurements, function(x) arrange(x, desc(luminance)))
+  
+  # remove faulty species matches (e.g. C. umbellata & C. bella falsely match)
+  matches <- function(x){
+    return(filter(x, x$Species == x$Species.y))
+  }
+  measurements <- lapply(measurements, function(x) matches(x))
+  
+  return(measurements)
+}
+
+
 # Function: unique_id() ----
 #' param colors_list: list of excel sheets with rgb color measurements
 #' gives each row in each sheet a unique id in a new column, 'id'
