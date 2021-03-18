@@ -131,6 +131,42 @@ pure_colors <- function(rough_out){
   return(pure_out)
 }
 
+# Function: get_lmd() ----
+#' correctly match each k-means center to light, medium, and dark
+#' and return list of data frames: light, medium, dark.
+#' Use this function after doing k-means clustering on lightness values,
+#' or L from L*a*b* space.
+#' param color_df: color data frame (e.g. green)
+#' param km_out: k-means output for color_df
+get_lmd <- function(color_df, km_out){
+  lmd_list <- list()
+  lmd_list[[1]] <- color_df %>%
+    filter(cluster == which(km_out$centers == max(km_out$centers)))
+  lmd_list[[2]] <- color_df %>%
+    filter(cluster != which(km_out$centers == min(km_out$centers)) 
+           & cluster != which(km_out$centers == max(km_out$centers)))
+  lmd_list[[3]] <- color_df %>%
+    filter(cluster == which(km_out$centers == min(km_out$centers)))
+  return(lmd_list)
+}
 
+# Function: rgb_tab() ----
+#' plot colors in table using rgb data
 
+rgb_tab <- function(rgb_data){
+  red <- rgb_data$Red/255
+  green <- rgb_data$Green/255
+  blue <- rgb_data$Blue/255
+  rgb_data$color_fill <- rgb(red, green, blue)
+  rgb <- rgb_data %>% select(color_fill)
+  rgb_tab <- rgb_data %>% select(id, Species, Red, Green, Blue, Colour)
+  tab <- ggtexttable(rgb_tab)
+  for (i in 1:nrow(rgb_tab)) {
+    row = i+1
+    tab <- table_cell_bg(tab, row = row, 
+                         column = 7,
+                         fill = rgb$color_fill[i])
+  }
+  tab
+}
 
