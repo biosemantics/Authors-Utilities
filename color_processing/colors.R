@@ -18,11 +18,6 @@ source('palette_functions.R')
 measurements <- read_excel_allsheets('data/colour_between_species_2020Dec04.xlsm')
 
 # keep just first two words of Species (genus, epithet)
-species_name <- function(x){
-  x <- mutate(x, Species = word(x$Species, 1, 2, sep = "_"))
-  x <- mutate(x, Species = str_replace(x$Species, "_", " "))
-  return(x)
-}
 measurements <- lapply(measurements, function(x) species_name(x))
 
 # new RGB samples for some species -- update measurements with these

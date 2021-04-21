@@ -574,7 +574,7 @@ ggsave('plots/round_2/filtered/red_dark_filtered.png', red_d_filtered_tab)
 
 # bind light, med, dark and select necessary columns
 
-color_bins <- function(color_name, light, med ,dark){
+color_bins <- function(color_name, light, med, dark){
   l <- light %>% mutate(color_bin = paste('light', color_name))
   m <- med %>% mutate(color_bin = paste('medium', color_name))
   d <- dark %>% mutate(color_bin = paste('dark', color_name))
@@ -635,35 +635,35 @@ colors_raw <- rbind(white_raw, brown_raw, green_raw, red_raw,
 colors_raw <- colors_raw %>%
   mutate(color = word(color_bin, 2), L_bin = word(color_bin, 1))
 
-# get sample colors for color scheme of visualization
-sample_color <- function(x) {
-  sample_rgb <- x[round(nrow(x)/2,0),]
-  sample <- rgb(sample_rgb$Red/255, sample_rgb$Green/255, sample_rgb$Blue/255)
-  return(sample)
-}
+# # get sample colors for color scheme of visualization
+# sample_color <- function(x) {
+#   sample_rgb <- x[round(nrow(x)/2,0),]
+#   sample <- rgb(sample_rgb$Red/255, sample_rgb$Green/255, sample_rgb$Blue/255)
+#   return(sample)
+# }
+# 
+# sample_green <- sample_color(green2)
+# sample_brown <- sample_color(brown2)
+# sample_white <- sample_color(white2)
+# sample_red <- sample_color(red2)
+# sample_yellow_green <- sample_color(yellow_green2)
+# sample_yellow_brown <- sample_color(yellow_brown2)
 
-sample_green <- sample_color(green2)
-sample_brown <- sample_color(brown2)
-sample_white <- sample_color(white2)
-sample_red <- sample_color(red2)
-sample_yellow_green <- sample_color(yellow_green2)
-sample_yellow_brown <- sample_color(yellow_brown2)
+sample_green <- centroid_color(green2)
+sample_brown <- centroid_color(brown2)
+sample_white <- centroid_color(white2)
+sample_red <- centroid_color(red2)
+sample_yellow_green <- centroid_color(yellow_green2)
+sample_yellow_brown <- centroid_color(yellow_brown2)
 
-sample_green_raw <- sample_color(green_raw)
-sample_brown_raw <- sample_color(brown_raw)
-sample_white_raw <- sample_color(white_raw)
-sample_red_raw <- sample_color(red_raw)
-sample_yellow_green_raw <- sample_color(yellow_green_raw)
-sample_yellow_brown_raw <- sample_color(yellow_brown_raw)
+sample_green_raw <- centroid_color(green_raw)
+sample_brown_raw <- centroid_color(brown_raw)
+sample_white_raw <- centroid_color(white_raw)
+sample_red_raw <- centroid_color(red_raw)
+sample_yellow_green_raw <- centroid_color(yellow_green_raw)
+sample_yellow_brown_raw <- centroid_color(yellow_brown_raw)
 
 # change name of sample color to "sample" to use as reference point
-mark_samples <- function(x, ...) {
-  samples = list(...)
-  marked <- mutate(x, color = if_else(rgb(x$Red/255, x$Green/255, x$Blue/255) %in% samples, "sample", x$color))
-  return(marked)
-}
-
-
 colors_filtered_marked <- mark_samples(colors_filtered, sample_green, sample_brown, sample_red, 
              sample_white, sample_yellow_green, sample_yellow_brown)
 
@@ -680,7 +680,7 @@ y_max <- 60
 color_space_filtered <- ggplot(colors_filtered_marked, aes(x=a, y=b, color=color)) +
   geom_point(alpha=3/4) +
   # facet_grid(rows=vars(color), cols=vars(L_bin)) +
-  scale_color_manual(values=c(sample_brown, sample_green, sample_red, "red", sample_white, 
+  scale_color_manual(values=c(sample_brown, sample_green, sample_red, "red", sample_white,
                               sample_yellow_brown, sample_yellow_green)) +
   ylab('Blue-Yellow') +
   xlab('Green-Red') +
@@ -695,8 +695,7 @@ color_space_filtered <- ggplot(colors_filtered_marked, aes(x=a, y=b, color=color
         legend.title = element_text(size=16),
         axis.title = element_text(size = 16),
         axis.text = element_text(size = 12))
-  
-  
+
 color_space_raw <- ggplot(colors_raw_marked, aes(x=a, y=b, color=color)) +
   geom_point(alpha=3/4) + 
   # facet_grid(rows=vars(color), cols=vars(L_bin)) +
@@ -713,12 +712,40 @@ color_space_raw <- ggplot(colors_raw_marked, aes(x=a, y=b, color=color)) +
         axis.title = element_text(size = 16),
         axis.text = element_text(size = 12))
 
+# Explore adding back discards
+discards <- rbind(brown_discards, green_discards, red_discards, white_discards,
+                  yellow_brown_discards, yellow_green_discards)
+discards$color <- 'discard'
+  
+
+# plot discarded colors on top of color_space_filtered
+color_space_discards <- ggplot(colors_filtered_marked, aes(x=a, y=b, color=color)) +
+  geom_point(alpha=3/4) +
+  geom_point(data=discards, alpha=1/4) +
+  # facet_grid(rows=vars(color), cols=vars(L_bin)) +
+  scale_color_manual(values=c(sample_brown,'gray', sample_green, sample_red, "red", sample_white, 
+                              sample_yellow_brown, sample_yellow_green)) +
+  ylab('Blue-Yellow') +
+  xlab('Green-Red') +
+  ylim(c(y_min, y_max)) +
+  xlim(c(x_min, x_max)) +
+  geom_rect(xmin = 10, xmax = x_max, ymin = y_min, ymax = y_max, color = sample_red, alpha = 0) + 
+  geom_rect(xmin = 0, xmax = 10, ymin = y_min, ymax = 30, color = sample_brown, alpha = 0) +
+  geom_rect(xmin = x_min, xmax = -5, ymin = y_min, ymax = 30, color = sample_green, alpha = 0) +
+  geom_rect(xmin = -15, xmax = -2, ymin = 30, ymax = y_max, color = sample_yellow_green, alpha = 0) +
+  geom_rect(xmin  =  -2, xmax = 10, ymin = 30, ymax = y_max, color = sample_yellow_brown, alpha = 0) +
+  theme(legend.text = element_text(size=16),
+        legend.title = element_text(size=16),
+        axis.title = element_text(size = 16),
+        axis.text = element_text(size = 12)) +
+  geom_rug(data=discards, inherit.aes=F, aes(x=a, y=b), alpha=1/10)
+
 # export color spaces side by side 
+color_spaces <- ggarrange(color_space_raw, color_space_filtered, color_space_discards, 
+                          labels=c("Raw", "Filtered", "Discards Included"),
+                          nrow=1)
 
-color_spaces <- ggarrange(color_space_raw, color_space_filtered, labels=c("Raw", "Filtered"))
-
-ggsave('./plots/color_spaces.png', color_spaces, width = 20, height = 8)
-
+ggsave('./plots/color_spaces.png', color_spaces, width = 30, height = 8)
 
 # export to excel ----
 

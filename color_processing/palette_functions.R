@@ -3,10 +3,12 @@
 
 # libraries
 library(tidyverse)
+library(ggpubr)
 library(readxl)
 library(stringr)
 library(fuzzyjoin)
 library(xlsx)
+library(RANN)
 
 # Function read_excel_allsheets() ----
 #' reads all sheets from an excel file into a list of data frames
@@ -170,3 +172,100 @@ rgb_tab <- function(rgb_data){
   tab
 }
 
+# Function: nn_downsample() ----
+nn_downsample <- function(data, k=3, scale=1/5){
+
+  # get distance to k nearest neighbors (excluding nearest: self)
+  nearest <- nn2(data,data, k = k+1)
+  nn_dist <- as.data.frame(nearest$nn.dists[,2:(k+1)]) 
+  mean_dist <- nn_dist %>% rowwise() %>% transmute(mean_dist = mean(c(V1, V2, V3)))
+
+  # bind dist to data
+  dist_data <- cbind(data, mean_dist)
+  # normalize mean_dist
+  min_max = function(x){
+    y = (x - min(x))/(max(x) - min(x))
+    return(y)
+  }
+  dist_data <- dist_data %>% mutate(nn_dist_norm = min_max(mean_dist))
+
+  # quantile sampling approach (nothing too close or too far: more evenly spaced?)
+  q25 <- quantile(dist_data$nn_dist_norm)[[2]]
+  q75 <- quantile(dist_data$nn_dist_norm)[[4]]
+  dist_sample <- dist_data %>% filter(nn_dist_norm > q25 & nn_dist_norm < q75)
+  dist_sample <- dist_sample[sample(nrow(dist_sample), size = 20),]
+
+return(dist_sample)
+}
+
+# # simulate points data
+# x1 <- runif(100, 0, 2*pi)
+# x2 <- runif(100, 0,3)
+# data <- data.frame(x1, x2)
+# 
+# 
+# dist_sample <- nn_downsample(data)
+# 
+# # # sample points proportionally to nearest neighbor
+# # dist_sample <- dist_data[sample(nrow(dist_data), size = 20, prob = dist_data$nn_dist_norm),]
+# # compare to random sample
+# rand_sample <- data[sample(nrow(data), size = 1/5 * nrow(data)),]
+# 
+# # plot original points
+# plot(data$x1, data$x2)
+# 
+# # plot down sampled points (proportional to distance)
+# plot(dist_sample$x1, dist_sample$x2)
+# 
+# # plot down sampled points (random)
+# plot(rand_sample$x1, rand_sample$x2)
+
+# Function: centroid_color() ----
+
+centroid_color <- function(data){
+  # centroid = mean a, b in Lab space
+  x <- mean(data$a)
+  y <- mean(data$b)
+  centroid <- data.frame(x, y)
+  
+  # actual point = nearest neighbor of centroid
+  points <- select(data, a, b)
+  nearest <- nn2(points, centroid, k=2)
+  nn_idx <- nearest$nn.idx[,2]
+  
+  # get color sample from index
+  sample_rgb <- data[nn_idx,]
+  sample <- rgb(sample_rgb$Red/255, sample_rgb$Green/255, sample_rgb$Blue/255)
+  return(sample)
+}
+
+# Function mark_samples() ----
+mark_samples <- function(x, ...) {
+  samples = list(...)
+  marked <- mutate(x, color = if_else(rgb(x$Red/255, x$Green/255, x$Blue/255) %in% samples, "sample", x$color))
+  return(marked)
+}
+
+
+# Function: species_name ----
+#' keep just first two words of Species (genus, epithet)
+species_name <- function(x){
+  x <- mutate(x, Species = word(x$Species, 1, 2, sep = "_"))
+  x <- mutate(x, Species = str_replace(x$Species, "_", " "))
+  return(x)
+}
+
+
+# Function: thresholds ----
+#' Separates colors in lab space into separate bins
+
+thresholds <- function(data){
+  out <- data %>% mutate(color = if_else(a>0 & a<10 & b<30, 'brown',
+                                        if_else(a< -5 & b <30, 'green',
+                                                if_else(b>30 & a > -2 & a <10, 'yellow-brown',
+                                                        if_else(b>30 & a < -2 & a > -15, 'yellow-green',
+                                                                if_else(a>10, 'red',
+                                                                        if_else(a> -5 & a < 0 & b < 30, 'white', 
+                                         'discard')))))))
+  return(out)
+}
