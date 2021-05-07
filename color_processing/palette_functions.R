@@ -256,16 +256,52 @@ species_name <- function(x){
 }
 
 
-# Function: thresholds ----
+# Function: thresholds_new ----
 #' Separates colors in lab space into separate bins
 
 thresholds <- function(data){
-  out <- data %>% mutate(color = if_else(a>0 & a<10 & b<30, 'brown',
-                                        if_else(a< -5 & b <30, 'green',
-                                                if_else(b>30 & a > -2 & a <10, 'yellow-brown',
-                                                        if_else(b>30 & a < -2 & a > -15, 'yellow-green',
-                                                                if_else(a>10, 'red',
-                                                                        if_else(a> -5 & a < 0 & b < 30, 'white', 
-                                         'discard')))))))
+  out <- data %>% mutate(color = if_else(a> -5 & a < 0 & b < 20, 'white', 
+                                         if_else(a< -2 & b < 32, 'green',
+                                                 if_else(a < -2 & b > 32 & a > -12, 'yellow-green', 
+                                                         if_else(a < -12 & b > 32, 'green',
+                                                                 if_else(a > -2 & a < 10 & b < 32, 'brown',
+                                                                         if_else(a > -2 & a < 10 & b > 32, 'yellow-brown',
+                                                                                 if_else(a>10 & b < 25, 'red',
+                                                                                         if_else(a > 10 & b > 25, 'brown',
+                                                                                                 'discard')))))))))
+  return(out)
+}
+
+# Function: update_measurements ----
+#' replace rows in original measurements with matching resampled rows in resample
+
+update_measurements <- function(original, new_samples){
+  keep <- filter(original, !(original$Species %in% new_samples$Species))
+  updated <- bind_rows(keep, new_samples)
+  return(updated)
+}
+
+
+# Function: vis_breaks ----
+#' visualize natural breaks in the distribution of color samples over a specified
+#' CIELab color space axis
+#' NOT WORKING - MAKES PLOT BUT ONLY IN GRAYSCALE
+
+bin_values <- function(data, ...){
+  bins <- list(...)
+  vals <- list()
+  for (b in bins) {
+    val <- centroid_color(data[data$bin == b,])
+    vals[[b]] <- val
+  }
+  return(vals)
+}
+
+vis_breaks <- function(data, dimension, bin_width, ...){
+  color_bins <- list(...)
+  out <- ggplot(data, aes(x=dimension))+
+    geom_histogram(bin_width=bin_width)+
+    scale_fill_manual(values = unlist(color_bins))+
+    theme_pubr()
   return(out)
 }

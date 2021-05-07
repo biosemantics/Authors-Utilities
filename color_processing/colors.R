@@ -35,17 +35,8 @@ resample <- color_strings(measurements_resampled, labs)
 original_measurements <- color_strings(measurements, labs)
 
 # replace rows in original_measurements with matching resampled rows in resample
-filter(original_measurements$Leaf, 
-       !(original_measurements$Leaf$Species %in% resample$Leaf_2$Species))
 
-
-update_measurements <- function(original, new_samples){
-  keep <- filter(original, !(original$Species %in% new_samples$Species))
-  updated <- bind_rows(keep, new_samples)
-  return(updated)
-}
-
-# update original meaurements with resampled species
+# update original measurements with resampled species
 updated <- list()
 updated$Leaf <- 
   update_measurements(original_measurements$Leaf, resample$Leaf_2)
