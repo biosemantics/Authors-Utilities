@@ -395,14 +395,22 @@ rg_split <- ggplot(rg_bins, aes(x=a, fill=bin))+
   scale_fill_manual(values=c(centroid_color(filter(rg_bins, bin=='more green')),
                              centroid_color(filter(rg_bins, bin=='more red'))))+
   labs(x = 'Green-Red', y = 'Count', fill = 'Bin')+
-  theme_pubr()
+  theme_pubr()+
+  theme(legend.text = element_text(size=10),
+        legend.title = element_text(size=12),
+        axis.title = element_text(size = 16),
+        axis.text = element_text(size = 10)) 
 
 yb_split <- ggplot(yb_bins, aes(x=b, fill=bin))+
   geom_histogram()+
   scale_fill_manual(values=c(centroid_color(filter(yb_bins, bin=='more blue')),
                              centroid_color(filter(yb_bins, bin=='more yellow'))))+
   labs(x = 'Blue-Yellow', y = 'Count', fill = 'Bin')+
-  theme_pubr()
+  theme_pubr()+
+  theme(legend.text = element_text(size=10),
+        legend.title = element_text(size=12),
+        axis.title = element_text(size = 16),
+        axis.text = element_text(size = 10)) 
 
 
 # 'MORE GREEN' SIDE
@@ -416,7 +424,11 @@ g_yg_split <- ggplot(g_yg_bins, aes(x=b, fill=bin))+
   scale_fill_manual(values=c(centroid_color(filter(g_yg_bins, bin=='more green')),
                              centroid_color(filter(g_yg_bins, bin=='more yellow'))))+
   labs(x = 'Blue-Yellow', y = 'Count', fill = 'Bin')+
-  theme_pubr()
+  theme_pubr()+
+  theme(legend.text = element_text(size=10),
+        legend.title = element_text(size=12),
+        axis.title = element_text(size = 16),
+        axis.text = element_text(size = 10)) 
 
 
   # for the green-looking values to the "left" of yellow-green 
@@ -427,7 +439,11 @@ g_yg_split_2 <- ggplot(g_yg_bins_2, aes(x=a, fill=bin))+
   scale_fill_manual(values=c(centroid_color(filter(g_yg_bins, bin=='more green')),
                              centroid_color(filter(g_yg_bins, bin=='more yellow'))))+
   labs(x = 'Green-Red', y = 'Count', fill = 'Bin')+
-  theme_pubr()
+  theme_pubr()+
+  theme(legend.text = element_text(size=10),
+        legend.title = element_text(size=12),
+        axis.title = element_text(size = 16),
+        axis.text = element_text(size = 10)) 
 
 
 # red vs. brown 
@@ -441,7 +457,11 @@ rb_split <- ggplot(rb_bins, aes(x=a, fill=bin))+
   scale_fill_manual(values=c(centroid_color(filter(rb_bins, bin=='more brown')),
                              centroid_color(filter(rb_bins, bin=='more red'))))+
   labs(x = 'Green-Red', y = 'Count', fill = 'Bin')+
-  theme_pubr()
+  theme_pubr()+
+  theme(legend.text = element_text(size=10),
+        legend.title = element_text(size=12),
+        axis.title = element_text(size = 16),
+        axis.text = element_text(size = 10)) 
 
 
   # red vs. yellow (when a > 10)
@@ -454,7 +474,11 @@ ry_split <- ggplot(ry_bins, aes(x=b, fill=bin))+
   scale_fill_manual(values=c(centroid_color(filter(ry_bins, bin=='more red')),
                              centroid_color(filter(ry_bins, bin=='more yellow'))))+
   labs(x = 'Blue-Yellow', y = 'Count', fill = 'Bin')+
-  theme_pubr()
+  theme_pubr()+
+  theme(legend.text = element_text(size=10),
+        legend.title = element_text(size=12),
+        axis.title = element_text(size = 16),
+        axis.text = element_text(size = 10)) 
 
 
 # brown vs yellow-brown
@@ -467,7 +491,11 @@ b_yb_split <- ggplot(b_yb_bins, aes(x=b, fill=bin))+
   scale_fill_manual(values=c(centroid_color(filter(b_yb_bins, bin=='more brown')),
                              centroid_color(filter(b_yb_bins, bin=='more yellow'))))+
   labs(x = 'Blue-Yellow', y = 'Count', fill = 'Bin')+
-  theme_pubr()
+  theme_pubr()+
+  theme(legend.text = element_text(size=10),
+        legend.title = element_text(size=12),
+        axis.title = element_text(size = 16),
+        axis.text = element_text(size = 10)) 
 
 
 # INDIVIDUAL COLOR BINS
@@ -488,7 +516,11 @@ w_split <- ggplot(white_bins_a, aes(x=a, fill=bin))+
                               centroid_color(filter(white_bins_a, bin=='green')),
                               centroid_color(filter(white_bins_a, bin=='white')))) +
   labs(x = 'Green-Red', y = 'Count', fill = 'Bin')+
-  theme_pubr()
+  theme_pubr()+
+  theme(legend.text = element_text(size=10),
+        legend.title = element_text(size=12),
+        axis.title = element_text(size = 16),
+        axis.text = element_text(size = 10)) 
 
 wb_split <- ggplot(white_bins_b, aes(x=b, fill=bin))+
   geom_histogram(binwidth=5)+
@@ -496,7 +528,21 @@ wb_split <- ggplot(white_bins_b, aes(x=b, fill=bin))+
   scale_fill_manual(values = c(centroid_color(filter(white_bins_b, bin=='other')),
                                centroid_color(filter(white_bins_b, bin=='white')))) +
   labs(x = 'Blue-Yellow', y = 'Count', fill = 'Bin')+
-  theme_pubr()
+  theme_pubr()+
+  theme(legend.text = element_text(size=10),
+        legend.title = element_text(size=12),
+        axis.title = element_text(size = 16),
+        axis.text = element_text(size = 10)) 
+
+splits_main <- ggarrange(rg_split, yb_split, nrow=1)
+splits_brownish <- ggarrange(b_yb_split, rb_split, ry_split, nrow=1)
+splits_greenish <- ggarrange(g_yg_split, g_yg_split_2, nrow=1)
+splits_whitish <- ggarrange(w_split, wb_split, nrow = 1)
+
+# g_yg_split b
+# ry_split b
+# b_yb_split b
+# wb_split b
 
 # white_l_filtered <- white_l %>% filter(b < 20)
 # white_m_filtered <- white_m %>% filter(b < 20)
@@ -620,109 +666,109 @@ wb_split <- ggplot(white_bins_b, aes(x=b, fill=bin))+
 # green_m_filtered <- green_m2 %>% filter(km == 2) # medium green
 # green_d_filtered <- green_d2 %>% filter(db == 0) # dark green
 
-# tabulate (visual)
-white_l_filtered_tab <- rgb_tab(white_l_filtered)
-white_m_filtered_tab <- rgb_tab(white_m_filtered)
-white_d_filtered_tab <- rgb_tab(white_d_filtered)
+# # tabulate (visual)
+# white_l_filtered_tab <- rgb_tab(white_l_filtered)
+# white_m_filtered_tab <- rgb_tab(white_m_filtered)
+# white_d_filtered_tab <- rgb_tab(white_d_filtered)
+# 
+# brown_l_filtered_tab <- rgb_tab(brown_l_filtered)
+# brown_m_filtered_tab <- rgb_tab(brown_m_filtered)
+# brown_d_filtered_tab <- rgb_tab(brown_d_filtered)
+# 
+# green_l_filtered_tab <- rgb_tab(green_l_filtered) # light green
+# green_m_filtered_tab <- rgb_tab(green_m_filtered) # medium green
+# green_d_filtered_tab <- rgb_tab(green_d_filtered) # dark green
+# 
+# yellow_green_l_filtered_tab <- rgb_tab(yellow_green_l_filtered)
+# yellow_green_m_filtered_tab <- rgb_tab(yellow_green_m_filtered)
+# yellow_green_d_filtered_tab <- rgb_tab(yellow_green_d_filtered) 
+# 
+# yellow_brown_l_filtered_tab <- rgb_tab(yellow_brown_l_filtered)
+# yellow_brown_m_filtered_tab <- rgb_tab(yellow_brown_m_filtered)
+# yellow_brown_d_filtered_tab <- rgb_tab(yellow_brown_d_filtered) 
+# 
+# red_l_filtered_tab <- rgb_tab(red_l_filtered)
+# red_m_filtered_tab <- rgb_tab(red_m_filtered)
+# red_d_filtered_tab <- rgb_tab(red_d_filtered) 
+# 
+# # save table
+# ggsave('plots/round_2/filtered/white_light_filtered.png', white_l_filtered_tab)
+# ggsave('plots/round_2/filtered/white_med_filtered.png', white_m_filtered_tab)
+# ggsave('plots/round_2/filtered/white_dark_filtered.png', white_d_filtered_tab)
+# 
+# # brown
+# ggsave('plots/round_2/filtered/brown_light_filtered.png', brown_l_filtered_tab)
+# ggsave('plots/round_2/filtered/brown_med_filtered.png', brown_m_filtered_tab)
+# ggsave('plots/round_2/filtered/brown_dark_filtered.png', brown_d_filtered_tab)
+# 
+# # green
+# ggsave('plots/round_2/filtered/green_light_filtered.png', green_l_filtered_tab) 
+# ggsave('plots/round_2/filtered/green_med_filtered.png', green_m_filtered_tab) 
+# ggsave('plots/round_2/filtered/green_dark_filtered.png', green_d_filtered_tab) 
+# 
+# # yellow-green
+# ggsave('plots/round_2/filtered/yellow-green_light_filtered.png', yellow_green_l_filtered_tab)
+# ggsave('plots/round_2/filtered/yellow-green_med_filtered.png', yellow_green_m_filtered_tab)
+# ggsave('plots/round_2/filtered/yellow-green_dark_filtered.png', yellow_green_d_filtered_tab)
+# 
+# # yellow-brown
+# ggsave('plots/round_2/filtered/yellow-brown_light_filtered.png', yellow_brown_l_filtered_tab)
+# ggsave('plots/round_2/filtered/yellow-brown_med_filtered.png', yellow_brown_m_filtered_tab)
+# ggsave('plots/round_2/filtered/yellow-brown_dark_filtered.png', yellow_brown_d_filtered_tab)
+# 
+# # red
+# ggsave('plots/round_2/filtered/red_light_filtered.png', red_l_filtered_tab)
+# ggsave('plots/round_2/filtered/red_med_filtered.png', red_m_filtered_tab)
+# ggsave('plots/round_2/filtered/red_dark_filtered.png', red_d_filtered_tab)
 
-brown_l_filtered_tab <- rgb_tab(brown_l_filtered)
-brown_m_filtered_tab <- rgb_tab(brown_m_filtered)
-brown_d_filtered_tab <- rgb_tab(brown_d_filtered)
 
-green_l_filtered_tab <- rgb_tab(green_l_filtered) # light green
-green_m_filtered_tab <- rgb_tab(green_m_filtered) # medium green
-green_d_filtered_tab <- rgb_tab(green_d_filtered) # dark green
-
-yellow_green_l_filtered_tab <- rgb_tab(yellow_green_l_filtered)
-yellow_green_m_filtered_tab <- rgb_tab(yellow_green_m_filtered)
-yellow_green_d_filtered_tab <- rgb_tab(yellow_green_d_filtered) 
-
-yellow_brown_l_filtered_tab <- rgb_tab(yellow_brown_l_filtered)
-yellow_brown_m_filtered_tab <- rgb_tab(yellow_brown_m_filtered)
-yellow_brown_d_filtered_tab <- rgb_tab(yellow_brown_d_filtered) 
-
-red_l_filtered_tab <- rgb_tab(red_l_filtered)
-red_m_filtered_tab <- rgb_tab(red_m_filtered)
-red_d_filtered_tab <- rgb_tab(red_d_filtered) 
-
-# save table
-ggsave('plots/round_2/filtered/white_light_filtered.png', white_l_filtered_tab)
-ggsave('plots/round_2/filtered/white_med_filtered.png', white_m_filtered_tab)
-ggsave('plots/round_2/filtered/white_dark_filtered.png', white_d_filtered_tab)
-
-# brown
-ggsave('plots/round_2/filtered/brown_light_filtered.png', brown_l_filtered_tab)
-ggsave('plots/round_2/filtered/brown_med_filtered.png', brown_m_filtered_tab)
-ggsave('plots/round_2/filtered/brown_dark_filtered.png', brown_d_filtered_tab)
-
-# green
-ggsave('plots/round_2/filtered/green_light_filtered.png', green_l_filtered_tab) 
-ggsave('plots/round_2/filtered/green_med_filtered.png', green_m_filtered_tab) 
-ggsave('plots/round_2/filtered/green_dark_filtered.png', green_d_filtered_tab) 
-
-# yellow-green
-ggsave('plots/round_2/filtered/yellow-green_light_filtered.png', yellow_green_l_filtered_tab)
-ggsave('plots/round_2/filtered/yellow-green_med_filtered.png', yellow_green_m_filtered_tab)
-ggsave('plots/round_2/filtered/yellow-green_dark_filtered.png', yellow_green_d_filtered_tab)
-
-# yellow-brown
-ggsave('plots/round_2/filtered/yellow-brown_light_filtered.png', yellow_brown_l_filtered_tab)
-ggsave('plots/round_2/filtered/yellow-brown_med_filtered.png', yellow_brown_m_filtered_tab)
-ggsave('plots/round_2/filtered/yellow-brown_dark_filtered.png', yellow_brown_d_filtered_tab)
-
-# red
-ggsave('plots/round_2/filtered/red_light_filtered.png', red_l_filtered_tab)
-ggsave('plots/round_2/filtered/red_med_filtered.png', red_m_filtered_tab)
-ggsave('plots/round_2/filtered/red_dark_filtered.png', red_d_filtered_tab)
-
-
-# bind light, med, dark and select necessary columns
-
-color_bins <- function(color_name, light, med, dark){
-  l <- light %>% mutate(color_bin = paste('light', color_name))
-  m <- med %>% mutate(color_bin = paste('medium', color_name))
-  d <- dark %>% mutate(color_bin = paste('dark', color_name))
-  df <- rbind(l,m,d)
-  df <- df %>% select(id, Species, Red, Green, Blue,
-                      L, a, b, Colour, color_bin)
-  return(df)
-}
-
-# filtered 
-white2 <- color_bins('white', 
-                     white_l_filtered, white_m_filtered, white_d_filtered)
-brown2 <- color_bins('brown', 
-                     brown_l_filtered, brown_m_filtered, brown_d_filtered)
-green2 <- color_bins('green', 
-                     green_l_filtered, green_m_filtered, green_d_filtered)
-red2 <- color_bins('red', 
-                     red_l_filtered, red_m_filtered, red_d_filtered)
-yellow_green2 <- color_bins('yellow_green', 
-                     yellow_green_l_filtered, 
-                     yellow_green_m_filtered, 
-                     yellow_green_d_filtered)
-yellow_brown2 <- color_bins('yellow_brown', 
-                     yellow_brown_l_filtered, 
-                     yellow_brown_m_filtered, 
-                     yellow_brown_d_filtered)
-
-# raw
-white_raw <- color_bins('white', 
-                     white_l, white_m, white_d)
-brown_raw <- color_bins('brown', 
-                     brown_l, brown_m, brown_d)
-green_raw <- color_bins('green', 
-                     green_l, green_m, green_d)
-red_raw <- color_bins('red', 
-                   red_l, red_m, red_d)
-yellow_green_raw <- color_bins('yellow_green', 
-                            yellow_green_l, 
-                            yellow_green_m, 
-                            yellow_green_d)
-yellow_brown_raw <- color_bins('yellow_brown', 
-                            yellow_brown_l, 
-                            yellow_brown_m, 
-                            yellow_brown_d)
+# # bind light, med, dark and select necessary columns
+# 
+# color_bins <- function(color_name, light, med, dark){
+#   l <- light %>% mutate(color_bin = paste('light', color_name))
+#   m <- med %>% mutate(color_bin = paste('medium', color_name))
+#   d <- dark %>% mutate(color_bin = paste('dark', color_name))
+#   df <- rbind(l,m,d)
+#   df <- df %>% select(id, Species, Red, Green, Blue,
+#                       L, a, b, Colour, color_bin)
+#   return(df)
+# }
+# 
+# # filtered 
+# white2 <- color_bins('white', 
+#                      white_l_filtered, white_m_filtered, white_d_filtered)
+# brown2 <- color_bins('brown', 
+#                      brown_l_filtered, brown_m_filtered, brown_d_filtered)
+# green2 <- color_bins('green', 
+#                      green_l_filtered, green_m_filtered, green_d_filtered)
+# red2 <- color_bins('red', 
+#                      red_l_filtered, red_m_filtered, red_d_filtered)
+# yellow_green2 <- color_bins('yellow_green', 
+#                      yellow_green_l_filtered, 
+#                      yellow_green_m_filtered, 
+#                      yellow_green_d_filtered)
+# yellow_brown2 <- color_bins('yellow_brown', 
+#                      yellow_brown_l_filtered, 
+#                      yellow_brown_m_filtered, 
+#                      yellow_brown_d_filtered)
+# 
+# # raw
+# white_raw <- color_bins('white', 
+#                      white_l, white_m, white_d)
+# brown_raw <- color_bins('brown', 
+#                      brown_l, brown_m, brown_d)
+# green_raw <- color_bins('green', 
+#                      green_l, green_m, green_d)
+# red_raw <- color_bins('red', 
+#                    red_l, red_m, red_d)
+# yellow_green_raw <- color_bins('yellow_green', 
+#                             yellow_green_l, 
+#                             yellow_green_m, 
+#                             yellow_green_d)
+# yellow_brown_raw <- color_bins('yellow_brown', 
+#                             yellow_brown_l, 
+#                             yellow_brown_m, 
+#                             yellow_brown_d)
 
 
 # names vs. perception: discrepancy between color label and colors ----
@@ -777,37 +823,37 @@ ggplot(colors_labeled, aes(x = label, y = a))+
 ggplot(colors_labeled, aes(x = label, y = b))+
   geom_boxplot()
 
-remove_outliers <- function(color){
-  outliers <- boxplot(color$a, plot=FALSE)$out
-  # it doesn't return anything at all if there are no outliers to remove
-  # to prevent this:
-  keep_a <- if(length(outliers>0)){
-    color[-which(color$a %in% outliers),]
-  } else {
-    color
-  }
-  outliers <- boxplot(color$b, plot=FALSE)$out
-  keep_b <- if(length(outliers>0)){
-    color[-which(color$b %in% outliers),]
-  } else {
-    color
-  }
-  keep <- inner_join(keep_a, keep_b)
-  return(keep)
-}
+# remove_outliers <- function(color){
+#   outliers <- boxplot(color$a, plot=FALSE)$out
+#   # it doesn't return anything at all if there are no outliers to remove
+#   # to prevent this:
+#   keep_a <- if(length(outliers>0)){
+#     color[-which(color$a %in% outliers),]
+#   } else {
+#     color
+#   }
+#   outliers <- boxplot(color$b, plot=FALSE)$out
+#   keep_b <- if(length(outliers>0)){
+#     color[-which(color$b %in% outliers),]
+#   } else {
+#     color
+#   }
+#   keep <- inner_join(keep_a, keep_b)
+#   return(keep)
+# }
 
-
-brown_keep <- remove_outliers(brown)
-green_keep <- remove_outliers(green)
-red_keep <- remove_outliers(red)
-white_keep <- remove_outliers(white)
-yellow_brown_keep <- remove_outliers(yellow_brown)
-yellow_green_keep <- remove_outliers(yellow_green)
-
-colors_labeled_keep <- bind_rows(brown_keep, green_keep, red_keep,
-                                 white_keep, yellow_brown_keep, yellow_green_keep)
-
-colors_labeled_keep$label <- as.factor(colors_labeled_keep$label)
+# 
+# brown_keep <- remove_outliers(brown)
+# green_keep <- remove_outliers(green)
+# red_keep <- remove_outliers(red)
+# white_keep <- remove_outliers(white)
+# yellow_brown_keep <- remove_outliers(yellow_brown)
+# yellow_green_keep <- remove_outliers(yellow_green)
+# 
+# colors_labeled_keep <- bind_rows(brown_keep, green_keep, red_keep,
+#                                  white_keep, yellow_brown_keep, yellow_green_keep)
+# 
+# colors_labeled_keep$label <- as.factor(colors_labeled_keep$label)
 
 
 # ggplot(colors_labeled_keep, aes(x = label, y = a))+
@@ -865,27 +911,21 @@ svm_linear_plot <- plot(svm_linear_down_nowhite, train_down_nowhite, b~a)
 pred_rad <- predict(svm_radial_down_nowhite, test_nowhite)
 pred_lin <- predict(svm_linear_down_nowhite, test_nowhite)
 
-cm_rad <- table(test$label, pred_rad)
-cm_lin <- table(test$label, pred_rad)
-
-
-score <- function(predicted, expected){
-  cm <- as.matrix(table(expected, predicted))
-  precision <- diag(cm) / colSums(cm)
-  recall <- diag(cm) / rowSums(cm)
-  f1 <- 2*precision*recall / (precision + recall)
-  return(data.frame(precision, recall, f1))
-  
-  # print(paste("precision: ", precision, "recall: ", recall, "f1 :", f1))
-  # return(list(precision, recall, f1))
-}
-
-
 score_rad <- score(pred_rad, test_nowhite$label)
 score_lin <- score(pred_lin, test_nowhite$label)
 
 mean_f1_rad <- mean(score_rad$f1)
 mean_f1_lin <- mean(score_lin$f1)
+
+# also compare with thresholds predictions score
+colors_labeled_test <- left_join(test, colors_labeled)
+
+score_thresholds <- score(colors_labeled_test$color, colors_labeled_test$label)
+mean_f1_thresholds <- mean(score_thresholds$f1)
+# not counting white
+score_thresholds_nowhite <- score_thresholds[c(1:3,5:6),]
+mean_f1_thresholds_nowhite  <- mean(score_thresholds_nowhite$f1)
+
 
 # train linear svm on full set (downsampled, no white, green outlier removed)
 colors_train <- colors_labeled %>% filter(b < 80 & label != 'white')
@@ -906,7 +946,220 @@ color_svm <- data.frame(pred)
 colors_labeled_svm <- bind_cols(colors_labeled, color_svm)
 colors_labeled_svm <- rename(colors_labeled_svm, color_svm = pred)
 
+# # save models, performance, and complete prediction matrix
+# saveRDS(svm_linear, "model/svm_linear.rds") # final model
+# saveRDS(svm_radial_down_nowhite, "model/svm_radial_dev.rds")
+# saveRDS(svm_linear_down_nowhite, "model/svm_linear_dev.rds")
+# saveRDS(colors_labeled_svm, "data/colors_with_predictions.rds")
+# saveRDS(score_lin, 'performance/score_lin.rds')
+# saveRDS(score_thresholds, 'performance/score_thresholds.rds')
+
+# # read model back in
+# svm_linear <- readRDS("model/svm_linear.rds")
+
+
 # visualizations ----
+
+# mark point used for color sample
+colors_svm <- colors_labeled_svm %>% select(-c(label, color))
+colors_svm <- colors_svm %>% rename(color=color_svm)
+colors_svm$color <- as.character(colors_svm$color)
+colors_svm_marked <- mark_samples(colors_svm,
+                                          centroid_color(filter(colors_svm, color == 'brown')),
+                                          centroid_color(filter(colors_svm, color == 'green')),
+                                          centroid_color(filter(colors_svm, color == 'red')),
+                                          centroid_color(filter(colors_svm, color == 'yellow-brown')),
+                                          centroid_color(filter(colors_svm, color == 'yellow-green')))
+colors_labeled$color <- as.character(colors_labeled$color)
+colors_marked <- mark_samples(colors_labeled,
+                                  centroid_color(filter(colors_labeled, color == 'brown')),
+                                  centroid_color(filter(colors_labeled, color == 'green')),
+                                  centroid_color(filter(colors_labeled, color == 'red')),
+                                  centroid_color(filter(colors_labeled, color == 'white')),
+                                  centroid_color(filter(colors_labeled, color == 'yellow-brown')),
+                                  centroid_color(filter(colors_labeled, color == 'yellow-green')))
+colors_labels <- colors_labeled_svm %>% select(-c(color_svm, color))
+colors_labels <- colors_labels %>% rename(color=label)
+colors_labels$color <- as.character(colors_labels$color)
+colors_labels_marked <- mark_samples(colors_labels,
+                                     centroid_color(filter(colors_labels, color == 'brown')),
+                                     centroid_color(filter(colors_labels, color == 'green')),
+                                     centroid_color(filter(colors_labels, color == 'red')),
+                                     centroid_color(filter(colors_labels, color == 'white')),
+                                     centroid_color(filter(colors_labels, color == 'yellow-brown')),
+                                     centroid_color(filter(colors_labels, color == 'yellow-green')))
+
+# spatial distribution of author descriptions & color classification
+# in RGB (x=R, y=G) vs. Lab space
+
+# which two dimensions are most useful in RGB space?
+# these will be the two with the widest variance
+# which can be visually inspected via violin plots.
+# answer: red and green
+
+rgb_tidy <- pivot_longer(colors, 
+                         cols=c(Red, Green, Blue), 
+                         names_to = 'axis', values_to = 'value')
+rgb_tidy <- factor(rgb_tidy$axis)
+
+rgb_tidy <- rgb_tidy %>% mutate(axis = fct_relevel(axis, 'Red', 'Green', 'Blue'))
+
+rgb_box <- ggplot(rgb_tidy, aes(x=axis, y=value, fill=axis))+
+  geom_violin()+
+  scale_fill_manual(values=c('red','green','blue'))+
+  labs(x = 'Axis', y = 'Value', fill = 'Axis')+
+  theme_pubr()+
+  theme(legend.text = element_text(size=10),
+        legend.title = element_text(size=12),
+        axis.title = element_text(size = 16),
+        axis.text = element_text(size = 10)) 
+
+# rgb vs lab, colors vs. labels visualization
+x_min <- -25
+x_max <- 30
+y_min <- -5
+y_max <- 60
+
+
+lab_svm <- ggplot(colors_svm,  
+                  aes(a, b, color = color))+
+  geom_point(size = 2)+
+  scale_color_manual(values=c(centroid_color(filter(colors_svm, color_svm=='brown')),
+                              centroid_color(filter(colors_svm, color_svm=='green')),
+                              centroid_color(filter(colors_svm, color_svm=='red')),
+                              'red',
+                              # centroid_color(filter(colors_svm, color_svm=='white')),
+                              centroid_color(filter(colors_svm, color_svm=='yellow-brown')),
+                              centroid_color(filter(colors_svm, color_svm=='yellow-green'))))+
+  geom_point(data=filter(colors_svm_marked, color=='sample'), size = 2)+
+  ylab('Blue-Yellow') +
+  xlab('Green-Red') +
+  ylim(c(y_min, y_max)) +
+  xlim(c(x_min, x_max)) +
+  theme_pubr()+
+  theme(legend.text = element_text(size=10),
+        legend.title = element_text(size=12),
+        axis.title = element_text(size = 16),
+        axis.text = element_text(size = 10)) 
+
+
+lab_thresholds <- ggplot(colors_labeled,  
+                     aes(a, b, color = color))+
+  geom_point(size = 2)+
+  scale_color_manual(values=c(centroid_color(filter(colors_labeled, color=='brown')),
+                              centroid_color(filter(colors_labeled, color=='green')),
+                              centroid_color(filter(colors_labeled, color=='red')),
+                              'red',
+                              centroid_color(filter(colors_labeled, color=='white')),
+                              centroid_color(filter(colors_labeled, color=='yellow-brown')),
+                              centroid_color(filter(colors_labeled, color=='yellow-green'))))+
+  geom_point(data = filter(colors_marked, color == 'sample'), size = 2)+
+  ylab('Blue-Yellow') +
+  xlab('Green-Red') +
+  ylim(c(y_min, y_max)) +
+  xlim(c(x_min, x_max)) +
+  theme_pubr()+
+  theme(legend.text = element_text(size=10),
+        legend.title = element_text(size=12),
+        axis.title = element_text(size = 16),
+        axis.text = element_text(size = 10)) 
+
+lab_labels <- ggplot(colors_labels_marked, 
+                     aes(a, b, color = color))+
+  geom_point(size = 2)+
+  scale_color_manual(values=c(centroid_color(filter(colors_labels, color=='brown')),
+                              centroid_color(filter(colors_labels, color=='green')),
+                              centroid_color(filter(colors_labels, color=='red')),
+                              'red',
+                              centroid_color(filter(colors_labels, color=='white')),
+                              centroid_color(filter(colors_labels, color=='yellow-brown')),
+                              centroid_color(filter(colors_labels, color=='yellow-green'))))+
+  geom_point(data = filter(colors_labels_marked, color == 'sample'), size = 2)+
+  ylab('Blue-Yellow') +
+  xlab('Green-Red') +
+  ylim(c(y_min, y_max)) +
+  xlim(c(x_min, x_max)) +
+  theme_pubr()+
+  theme(legend.text = element_text(size=10),
+        legend.title = element_text(size=12),
+        axis.title = element_text(size = 16),
+        axis.text = element_text(size = 10)) 
+
+
+# Lab space vs. rgb space example
+
+rgb_thresholds <- ggplot(colors_labeled, 
+                     aes(Red, Green, color = color))+
+  geom_point(size = 2)+
+  scale_color_manual(values=c(centroid_color(filter(colors_labeled, color=='brown')),
+                              centroid_color(filter(colors_labeled, color=='green')),
+                              centroid_color(filter(colors_labeled, color=='red')),
+                              'red',
+                              centroid_color(filter(colors_labeled, color=='white')),
+                              centroid_color(filter(colors_labeled, color=='yellow-brown')),
+                              centroid_color(filter(colors_labeled, color=='yellow-green'))))+
+  geom_point(data = filter(colors_marked, color == 'sample'), size = 2)+
+  ylab('Green Value') +
+  xlab('Red Value') +
+  # ylim(c(y_min, y_max)) +
+  # xlim(c(x_min, x_max)) +
+  theme_pubr()+
+  theme(legend.text = element_text(size=10),
+        legend.title = element_text(size=12),
+        axis.title = element_text(size = 16),
+        axis.text = element_text(size = 10))  
+
+rgb_labels <- ggplot(colors_labels_marked, 
+                     aes(Red, Green, color = color))+
+  geom_point(size = 2)+
+  scale_color_manual(values=c(centroid_color(filter(colors_labels, color=='brown')),
+                              centroid_color(filter(colors_labels, color=='green')),
+                              centroid_color(filter(colors_labels, color=='red')),
+                              'red',
+                              centroid_color(filter(colors_labels, color=='white')),
+                              centroid_color(filter(colors_labels, color=='yellow-brown')),
+                              centroid_color(filter(colors_labels, color=='yellow-green'))))+
+  geom_point(data = filter(colors_labels_marked, color == 'sample'), size = 2)+
+  ylab('Green Value') +
+  xlab('Red Value') +
+  # ylim(c(y_min, y_max)) +
+  # xlim(c(x_min, x_max)) +
+  theme_pubr()+
+  theme(legend.text = element_text(size=10),
+        legend.title = element_text(size=12),
+        axis.title = element_text(size = 16),
+        axis.text = element_text(size = 10)) 
+
+rgb_svm <- ggplot(colors_svm_marked,  
+                  aes(Red, Green, color = color))+
+  geom_point(size = 2)+
+  scale_color_manual(values=c(centroid_color(filter(colors_svm, color_svm=='brown')),
+                              centroid_color(filter(colors_svm, color_svm=='green')),
+                              centroid_color(filter(colors_svm, color_svm=='red')),
+                              'red',
+                              # centroid_color(filter(colors_svm, color_svm=='white')),
+                              centroid_color(filter(colors_svm, color_svm=='yellow-brown')),
+                              centroid_color(filter(colors_svm, color_svm=='yellow-green'))))+
+  geom_point(data=filter(colors_svm_marked, color=='sample'), size=2)+
+  ylab('Green Value') +
+  xlab('Red Value') +
+  # ylim(c(y_min, y_max)) +
+  # xlim(c(x_min, x_max)) +
+  theme_pubr()+
+  theme(legend.text = element_text(size=10),
+        legend.title = element_text(size=12),
+        axis.title = element_text(size = 16),
+        axis.text = element_text(size = 10)) 
+  
+
+# arrange all of these plots into a big grid
+
+spaces <- ggarrange(rgb_thresholds, lab_thresholds,
+                    rgb_svm, lab_svm,
+                    rgb_labels, lab_labels,
+                    ncol=2, nrow=3)
+
+
 
 # calculate proportion of each color label present in each actual color set
 # label test 
@@ -943,296 +1196,195 @@ color_test_plot <- ggplot(color_test, aes(x = label, y = proportion, fill = colo
   labs(x='Author Label Category', y='Frequency', fill='Color Classification')+
   theme_pubr()
 
-
-# spatial distribution of author descriptions & color classification
-# for green & brown
-# in RGB (x=R, y=G) vs. Lab space
-
-# which two dimensions are most useful in RGB space?
-# these will be the two with the widest variance
-# which can be visually inspected via violin plots.
-# answer: red and green
-
-rgb_tidy <- pivot_longer(colors, 
-                         cols=c(Red, Green, Blue), 
-                         names_to = 'axis', values_to = 'value')
-rgb_tidy <- factor(rgb_tidy$axis)
-
-rgb_tidy <- rgb_tidy %>% mutate(axis = fct_relevel(axis, 'Red', 'Green', 'Blue'))
-
-rgb_box <- ggplot(rgb_tidy, aes(x=axis, y=value, fill=axis))+
-  geom_violin()+
-  scale_fill_manual(values=c('red','green','blue'))+
-  theme_pubr() 
-
-# rgb vs lab, colors vs. labels visualization
-x_min <- -25
-x_max <- 30
-y_min <- -5
-y_max <- 60
-
-lab_svm <- ggplot(colors_labeled_svm,  
-                  aes(a, b, color = color_svm))+
-  geom_point()+
-  scale_color_manual(values=c(centroid_color(filter(colors_labeled_svm, color_svm=='brown')),
-                              centroid_color(filter(colors_labeled_svm, color_svm=='green')),
-                              centroid_color(filter(colors_labeled_svm, color_svm=='red')),
-                              # centroid_color(filter(colors_labeled_svm, color_svm=='white')),
-                              centroid_color(filter(colors_labeled_svm, color_svm=='yellow-brown')),
-                              centroid_color(filter(colors_labeled_svm, color_svm=='yellow-green'))))+
-  ylab('Blue-Yellow') +
-  xlab('Green-Red') +
-  ylim(c(y_min, y_max)) +
-  xlim(c(x_min, x_max)) +
-  theme_pubr()
-
-ggplot(filter(colors_labeled_svm, color_svm=='red'), aes(a, b, color=color_svm))+
-  geom_point()+
-  scale_color_manual(values=centroid_color(filter(colors_labeled_svm, color_svm=='red')))
+# save visualizations (already run) ----
+# ggsave('plots/final/splits_main.png', splits_main, width = 10, height = 5)
+# ggsave('plots/final/splits_brownish.png', splits_brownish, width = 15, height = 5)
+# ggsave('plots/final/splits_greenish.png', splits_greenish, width = 10, height = 5)
+# ggsave('plots/final/splits_whitish.png', splits_whitish, width = 10, height = 5)
+# ggsave('plots/final/rgb_axis_distributions.png', rgb_box, width = 5, height = 5)
+# ggsave('plots/final/spaces_rgb_vs_lab.png', spaces, width = 10, height = 15)
 
 
-lab_colors <- ggplot(colors_labeled,  
-                     aes(a, b, color = color))+
-  geom_point()+
-  scale_color_manual(values=c(centroid_color(filter(colors_labeled, color=='brown')),
-                              centroid_color(filter(colors_labeled, color=='green')),
-                              centroid_color(filter(colors_labeled, color=='red')),
-                              centroid_color(filter(colors_labeled, color=='white')),
-                              centroid_color(filter(colors_labeled, color=='yellow-brown')),
-                              centroid_color(filter(colors_labeled, color=='yellow-green'))))+
-  ylab('Blue-Yellow') +
-  xlab('Green-Red') +
-  ylim(c(y_min, y_max)) +
-  xlim(c(x_min, x_max)) +
-  theme_pubr()
 
-lab_labels <- ggplot(colors_labeled, 
-                     aes(a, b, color = label))+
-  geom_point()+
-  scale_color_manual(values=c(centroid_color(filter(colors_labeled, color=='brown')),
-                              centroid_color(filter(colors_labeled, color=='green')),
-                              centroid_color(filter(colors_labeled, color=='red')),
-                              centroid_color(filter(colors_labeled, color=='white')),
-                              centroid_color(filter(colors_labeled, color=='yellow-brown')),
-                              centroid_color(filter(colors_labeled, color=='yellow-green'))))+
-  ylab('Blue-Yellow') +
-  xlab('Green-Red') +
-  ylim(c(y_min, y_max)) +
-  xlim(c(x_min, x_max)) +
-  theme_pubr()
-
-rgb_colors <- ggplot(colors_labeled, 
-                     aes(Red, Green, color = color))+
-  geom_point()+
-  scale_color_manual(values=c(centroid_color(filter(colors_labeled, color=='brown')),
-                              centroid_color(filter(colors_labeled, color=='green')),
-                              centroid_color(filter(colors_labeled, color=='red')),
-                              centroid_color(filter(colors_labeled, color=='white')),
-                              centroid_color(filter(colors_labeled, color=='yellow-brown')),
-                              centroid_color(filter(colors_labeled, color=='yellow-green'))))+
-  ylab('Green Value') +
-  xlab('Red Value') +
-  # ylim(c(y_min, y_max)) +
-  # xlim(c(x_min, x_max)) +
-  theme_pubr()
-
-rgb_labels <- ggplot(colors_labeled, 
-                     aes(Red, Green, color = label))+
-  geom_point()+
-  scale_color_manual(values=c(centroid_color(filter(colors_labeled, color=='brown')),
-                              centroid_color(filter(colors_labeled, color=='green')),
-                              centroid_color(filter(colors_labeled, color=='red')),
-                              centroid_color(filter(colors_labeled, color=='white')),
-                              centroid_color(filter(colors_labeled, color=='yellow-brown')),
-                              centroid_color(filter(colors_labeled, color=='yellow-green'))))+
-  ylab('Green Value') +
-  xlab('Red Value') +
-  # ylim(c(y_min, y_max)) +
-  # xlim(c(x_min, x_max)) +
-  theme_pubr()
-
-
-# prep data
-colors_filtered <- rbind(white2, brown2, green2, red2, yellow_green2, yellow_brown2)
-colors_filtered <- colors_filtered %>%
-  mutate(color = word(color_bin, 2), L_bin = word(color_bin, 1))
-
-colors_raw <- rbind(white_raw, brown_raw, green_raw, red_raw,
-                    yellow_green_raw, yellow_brown_raw)
-colors_raw <- colors_raw %>%
-  mutate(color = word(color_bin, 2), L_bin = word(color_bin, 1))
-
-# # get sample colors for color scheme of visualization
-# sample_color <- function(x) {
-#   sample_rgb <- x[round(nrow(x)/2,0),]
-#   sample <- rgb(sample_rgb$Red/255, sample_rgb$Green/255, sample_rgb$Blue/255)
-#   return(sample)
-# }
+# # OLD
+# # prep data
+# colors_filtered <- rbind(white2, brown2, green2, red2, yellow_green2, yellow_brown2)
+# colors_filtered <- colors_filtered %>%
+#   mutate(color = word(color_bin, 2), L_bin = word(color_bin, 1))
 # 
-# sample_green <- sample_color(green2)
-# sample_brown <- sample_color(brown2)
-# sample_white <- sample_color(white2)
-# sample_red <- sample_color(red2)
-# sample_yellow_green <- sample_color(yellow_green2)
-# sample_yellow_brown <- sample_color(yellow_brown2)
-
-sample_green <- centroid_color(green2)
-sample_brown <- centroid_color(brown2)
-sample_white <- centroid_color(white2)
-sample_red <- centroid_color(red2)
-sample_yellow_green <- centroid_color(yellow_green2)
-sample_yellow_brown <- centroid_color(yellow_brown2)
-
-sample_green_raw <- centroid_color(green_raw)
-sample_brown_raw <- centroid_color(brown_raw)
-sample_white_raw <- centroid_color(white_raw)
-sample_red_raw <- centroid_color(red_raw)
-sample_yellow_green_raw <- centroid_color(yellow_green_raw)
-sample_yellow_brown_raw <- centroid_color(yellow_brown_raw)
-
-# change name of sample color to "sample" to use as reference point
-colors_filtered_marked <- mark_samples(colors_filtered, sample_green, sample_brown, sample_red, 
-             sample_white, sample_yellow_green, sample_yellow_brown)
-
-colors_raw_marked <- mark_samples(colors_raw, sample_green_raw, sample_brown_raw, sample_red_raw,
-                                  sample_white_raw, sample_yellow_green_raw, sample_yellow_brown_raw)
-
-
-# plot 
-x_min <- -25
-x_max <- 30
-y_min <- -5
-y_max <- 60
-
-color_space_filtered <- ggplot(colors_filtered_marked, aes(x=a, y=b, color=color)) +
-  geom_point(alpha=3/4) +
-  # facet_grid(rows=vars(color), cols=vars(L_bin)) +
-  scale_color_manual(values=c(sample_brown, sample_green, sample_red, "red", sample_white,
-                              sample_yellow_brown, sample_yellow_green)) +
-  ylab('Blue-Yellow') +
-  xlab('Green-Red') +
-  ylim(c(y_min, y_max)) +
-  xlim(c(x_min, x_max)) +
-  geom_rect(xmin = 10, xmax = x_max, ymin = y_min, ymax = y_max, color = sample_red, alpha = 0) + 
-  geom_rect(xmin = 0, xmax = 10, ymin = y_min, ymax = 30, color = sample_brown, alpha = 0) +
-  geom_rect(xmin = x_min, xmax = -5, ymin = y_min, ymax = 30, color = sample_green, alpha = 0) +
-  geom_rect(xmin = -15, xmax = -2, ymin = 30, ymax = y_max, color = sample_yellow_green, alpha = 0) +
-  geom_rect(xmin  =  -2, xmax = 10, ymin = 30, ymax = y_max, color = sample_yellow_brown, alpha = 0) +
-  theme(legend.text = element_text(size=16),
-        legend.title = element_text(size=16),
-        axis.title = element_text(size = 16),
-        axis.text = element_text(size = 12))
-
-color_space_raw <- ggplot(colors_raw_marked, aes(x=a, y=b, color=color)) +
-  geom_point(alpha=3/4) + 
-  # facet_grid(rows=vars(color), cols=vars(L_bin)) +
-  scale_color_manual(values=c(sample_brown_raw, sample_green_raw, sample_red_raw,
-                              "red",
-                              sample_white_raw, sample_yellow_brown_raw,
-                              sample_yellow_green_raw)) +
-  ylab('Blue-Yellow') +
-  xlab('Green-Red') +
-  ylim(c(y_min, y_max)) +
-  xlim(c(x_min, x_max)) +
-  theme(legend.text = element_text(size=16),
-        legend.title = element_text(size=16),
-        axis.title = element_text(size = 16),
-        axis.text = element_text(size = 12))
-
-# Explore adding back discards
-discards <- rbind(brown_discards, green_discards, red_discards, white_discards,
-                  yellow_brown_discards, yellow_green_discards)
-discards$color <- 'discard'
-  
-
-# plot discarded colors on top of color_space_filtered
-color_space_discards <- ggplot(colors_filtered_marked, aes(x=a, y=b, color=color)) +
-  geom_point(alpha=3/4) +
-  geom_point(data=discards, alpha=1/4) +
-  # facet_grid(rows=vars(color), cols=vars(L_bin)) +
-  scale_color_manual(values=c(sample_brown,'gray', sample_green, sample_red, "red", sample_white, 
-                              sample_yellow_brown, sample_yellow_green)) +
-  ylab('Blue-Yellow') +
-  xlab('Green-Red') +
-  ylim(c(y_min, y_max)) +
-  xlim(c(x_min, x_max)) +
-  geom_rect(xmin = 10, xmax = x_max, ymin = y_min, ymax = y_max, color = sample_red, alpha = 0) + 
-  geom_rect(xmin = 0, xmax = 10, ymin = y_min, ymax = 30, color = sample_brown, alpha = 0) +
-  geom_rect(xmin = x_min, xmax = -5, ymin = y_min, ymax = 30, color = sample_green, alpha = 0) +
-  geom_rect(xmin = -15, xmax = -2, ymin = 30, ymax = y_max, color = sample_yellow_green, alpha = 0) +
-  geom_rect(xmin  =  -2, xmax = 10, ymin = 30, ymax = y_max, color = sample_yellow_brown, alpha = 0) +
-  theme(legend.text = element_text(size=16),
-        legend.title = element_text(size=16),
-        axis.title = element_text(size = 16),
-        axis.text = element_text(size = 12)) +
-  geom_rug(data=discards, inherit.aes=F, aes(x=a, y=b), alpha=1/10)
-
-# export color spaces side by side 
-color_spaces <- ggarrange(color_space_raw, color_space_filtered, color_space_discards, 
-                          labels=c("Raw", "Filtered", "Discards Included"),
-                          nrow=1)
-
-ggsave('./plots/color_spaces.png', color_spaces, width = 30, height = 8)
-
-# export to excel ----
-
-# finish prepping data to export
-# get colors removed when making colors_filtered
-green_removed <- anti_join(green_raw, green2)
-brown_removed <- anti_join(brown_raw, brown2)
-red_removed <- anti_join(red_raw, red2)
-white_removed <- anti_join(white_raw, white2)
-yellow_green_removed <- anti_join(yellow_green_raw, yellow_green2)
-yellow_brown_removed <- anti_join(yellow_brown_raw, yellow_brown2)
-
-
-# make a tab for the gigantic colors df to keep provenance for all colors using unique id
-write.xlsx(colors, file="data/colour_between_species_2021Mar17.xlsx", sheetName="Master", 
-           append=TRUE)
-# tabs for green, brown, red, white
-write.xlsx(green2, file="data/colour_between_species_2021Mar17.xlsx", sheetName="Green", 
-           append=TRUE)
-write.xlsx(brown2, file="data/colour_between_species_2021Mar17.xlsx", sheetName="Brown", 
-           append=TRUE)
-write.xlsx(red2, file="data/colour_between_species_2021Mar17.xlsx", sheetName="Red", 
-           append=TRUE)
-write.xlsx(white2, file="data/colour_between_species_2021Mar17.xlsx", sheetName="White", 
-           append=TRUE)
-write.xlsx(yellow_green2, file="data/colour_between_species_2021Mar17.xlsx", sheetName="Yellow-Green", 
-           append=TRUE)
-write.xlsx(yellow_brown2, file="data/colour_between_species_2021Mar17.xlsx", sheetName="Yellow-Brown", 
-           append=TRUE)
-
-# tabs for each color: examples removed when filtering using L*a*b* space thresholds
-write.xlsx(green_removed, file="data/colour_between_species_2021Mar17.xlsx", sheetName="Green removed (Lab)", 
-           append=TRUE)
-write.xlsx(brown_removed, file="data/colour_between_species_2021Mar17.xlsx", sheetName="Brown removed (Lab)", 
-           append=TRUE)
-write.xlsx(red_removed, file="data/colour_between_species_2021Mar17.xlsx", sheetName="Red removed (Lab)", 
-           append=TRUE)
-write.xlsx(white_removed, file="data/colour_between_species_2021Mar17.xlsx", sheetName="White removed (Lab)", 
-           append=TRUE)
-write.xlsx(yellow_green_removed, file="data/colour_between_species_2021Mar17.xlsx", sheetName="Yellow-Green removed (Lab)", 
-           append=TRUE)
-write.xlsx(yellow_brown_removed, file="data/colour_between_species_2021Mar17.xlsx", sheetName="Yellow-Brown removed (Lab)", 
-           append=TRUE)
-
-# tabs for each color: examples discarded when making "pure" colors
-write.xlsx(green_discards, file="data/colour_between_species_2021Mar17.xlsx", sheetName="Green Discards", 
-           append=TRUE)
-write.xlsx(brown_discards, file="data/colour_between_species_2021Mar17.xlsx", sheetName="Brown Discards", 
-           append=TRUE)
-write.xlsx(red_discards, file="data/colour_between_species_2021Mar17.xlsx", sheetName="Red Discards", 
-           append=TRUE)
-write.xlsx(white_discards, file="data/colour_between_species_2021Mar17.xlsx", sheetName="White Discards", 
-           append=TRUE)
-write.xlsx(yellow_green_discards, file="data/colour_between_species_2021Mar17.xlsx", sheetName="Yellow-Green Discards", 
-           append=TRUE)
-write.xlsx(yellow_brown_discards, file="data/colour_between_species_2021Mar17.xlsx", sheetName="Yellow-Brown Discards", 
-           append=TRUE)
-
-
-
+# colors_raw <- rbind(white_raw, brown_raw, green_raw, red_raw,
+#                     yellow_green_raw, yellow_brown_raw)
+# colors_raw <- colors_raw %>%
+#   mutate(color = word(color_bin, 2), L_bin = word(color_bin, 1))
+# 
+# # # get sample colors for color scheme of visualization
+# # sample_color <- function(x) {
+# #   sample_rgb <- x[round(nrow(x)/2,0),]
+# #   sample <- rgb(sample_rgb$Red/255, sample_rgb$Green/255, sample_rgb$Blue/255)
+# #   return(sample)
+# # }
+# # 
+# # sample_green <- sample_color(green2)
+# # sample_brown <- sample_color(brown2)
+# # sample_white <- sample_color(white2)
+# # sample_red <- sample_color(red2)
+# # sample_yellow_green <- sample_color(yellow_green2)
+# # sample_yellow_brown <- sample_color(yellow_brown2)
+# 
+# sample_green <- centroid_color(green2)
+# sample_brown <- centroid_color(brown2)
+# sample_white <- centroid_color(white2)
+# sample_red <- centroid_color(red2)
+# sample_yellow_green <- centroid_color(yellow_green2)
+# sample_yellow_brown <- centroid_color(yellow_brown2)
+# 
+# sample_green_raw <- centroid_color(green_raw)
+# sample_brown_raw <- centroid_color(brown_raw)
+# sample_white_raw <- centroid_color(white_raw)
+# sample_red_raw <- centroid_color(red_raw)
+# sample_yellow_green_raw <- centroid_color(yellow_green_raw)
+# sample_yellow_brown_raw <- centroid_color(yellow_brown_raw)
+# 
+# # change name of sample color to "sample" to use as reference point
+# colors_filtered_marked <- mark_samples(colors_filtered, sample_green, sample_brown, sample_red, 
+#              sample_white, sample_yellow_green, sample_yellow_brown)
+# 
+# colors_raw_marked <- mark_samples(colors_raw, sample_green_raw, sample_brown_raw, sample_red_raw,
+#                                   sample_white_raw, sample_yellow_green_raw, sample_yellow_brown_raw)
+# 
+# 
+# # plot 
+# x_min <- -25
+# x_max <- 30
+# y_min <- -5
+# y_max <- 60
+# 
+# color_space_filtered <- ggplot(colors_filtered_marked, aes(x=a, y=b, color=color)) +
+#   geom_point(alpha=3/4) +
+#   # facet_grid(rows=vars(color), cols=vars(L_bin)) +
+#   scale_color_manual(values=c(sample_brown, sample_green, sample_red, "red", sample_white,
+#                               sample_yellow_brown, sample_yellow_green)) +
+#   ylab('Blue-Yellow') +
+#   xlab('Green-Red') +
+#   ylim(c(y_min, y_max)) +
+#   xlim(c(x_min, x_max)) +
+#   geom_rect(xmin = 10, xmax = x_max, ymin = y_min, ymax = y_max, color = sample_red, alpha = 0) + 
+#   geom_rect(xmin = 0, xmax = 10, ymin = y_min, ymax = 30, color = sample_brown, alpha = 0) +
+#   geom_rect(xmin = x_min, xmax = -5, ymin = y_min, ymax = 30, color = sample_green, alpha = 0) +
+#   geom_rect(xmin = -15, xmax = -2, ymin = 30, ymax = y_max, color = sample_yellow_green, alpha = 0) +
+#   geom_rect(xmin  =  -2, xmax = 10, ymin = 30, ymax = y_max, color = sample_yellow_brown, alpha = 0) +
+#   theme(legend.text = element_text(size=16),
+#         legend.title = element_text(size=16),
+#         axis.title = element_text(size = 16),
+#         axis.text = element_text(size = 12))
+# 
+# color_space_raw <- ggplot(colors_raw_marked, aes(x=a, y=b, color=color)) +
+#   geom_point(alpha=3/4) + 
+#   # facet_grid(rows=vars(color), cols=vars(L_bin)) +
+#   scale_color_manual(values=c(sample_brown_raw, sample_green_raw, sample_red_raw,
+#                               "red",
+#                               sample_white_raw, sample_yellow_brown_raw,
+#                               sample_yellow_green_raw)) +
+#   ylab('Blue-Yellow') +
+#   xlab('Green-Red') +
+#   ylim(c(y_min, y_max)) +
+#   xlim(c(x_min, x_max)) +
+#   theme(legend.text = element_text(size=16),
+#         legend.title = element_text(size=16),
+#         axis.title = element_text(size = 16),
+#         axis.text = element_text(size = 12))
+# 
+# # Explore adding back discards
+# discards <- rbind(brown_discards, green_discards, red_discards, white_discards,
+#                   yellow_brown_discards, yellow_green_discards)
+# discards$color <- 'discard'
+#   
+# 
+# # plot discarded colors on top of color_space_filtered
+# color_space_discards <- ggplot(colors_filtered_marked, aes(x=a, y=b, color=color)) +
+#   geom_point(alpha=3/4) +
+#   geom_point(data=discards, alpha=1/4) +
+#   # facet_grid(rows=vars(color), cols=vars(L_bin)) +
+#   scale_color_manual(values=c(sample_brown,'gray', sample_green, sample_red, "red", sample_white, 
+#                               sample_yellow_brown, sample_yellow_green)) +
+#   ylab('Blue-Yellow') +
+#   xlab('Green-Red') +
+#   ylim(c(y_min, y_max)) +
+#   xlim(c(x_min, x_max)) +
+#   geom_rect(xmin = 10, xmax = x_max, ymin = y_min, ymax = y_max, color = sample_red, alpha = 0) + 
+#   geom_rect(xmin = 0, xmax = 10, ymin = y_min, ymax = 30, color = sample_brown, alpha = 0) +
+#   geom_rect(xmin = x_min, xmax = -5, ymin = y_min, ymax = 30, color = sample_green, alpha = 0) +
+#   geom_rect(xmin = -15, xmax = -2, ymin = 30, ymax = y_max, color = sample_yellow_green, alpha = 0) +
+#   geom_rect(xmin  =  -2, xmax = 10, ymin = 30, ymax = y_max, color = sample_yellow_brown, alpha = 0) +
+#   theme(legend.text = element_text(size=16),
+#         legend.title = element_text(size=16),
+#         axis.title = element_text(size = 16),
+#         axis.text = element_text(size = 12)) +
+#   geom_rug(data=discards, inherit.aes=F, aes(x=a, y=b), alpha=1/10)
+# 
+# # export color spaces side by side 
+# color_spaces <- ggarrange(color_space_raw, color_space_filtered, color_space_discards, 
+#                           labels=c("Raw", "Filtered", "Discards Included"),
+#                           nrow=1)
+# 
+# ggsave('./plots/color_spaces.png', color_spaces, width = 30, height = 8)
+# 
+# # export to excel ----
+# 
+# # finish prepping data to export
+# # get colors removed when making colors_filtered
+# green_removed <- anti_join(green_raw, green2)
+# brown_removed <- anti_join(brown_raw, brown2)
+# red_removed <- anti_join(red_raw, red2)
+# white_removed <- anti_join(white_raw, white2)
+# yellow_green_removed <- anti_join(yellow_green_raw, yellow_green2)
+# yellow_brown_removed <- anti_join(yellow_brown_raw, yellow_brown2)
+# 
+# 
+# # make a tab for the gigantic colors df to keep provenance for all colors using unique id
+# write.xlsx(colors, file="data/colour_between_species_2021Mar17.xlsx", sheetName="Master", 
+#            append=TRUE)
+# # tabs for green, brown, red, white
+# write.xlsx(green2, file="data/colour_between_species_2021Mar17.xlsx", sheetName="Green", 
+#            append=TRUE)
+# write.xlsx(brown2, file="data/colour_between_species_2021Mar17.xlsx", sheetName="Brown", 
+#            append=TRUE)
+# write.xlsx(red2, file="data/colour_between_species_2021Mar17.xlsx", sheetName="Red", 
+#            append=TRUE)
+# write.xlsx(white2, file="data/colour_between_species_2021Mar17.xlsx", sheetName="White", 
+#            append=TRUE)
+# write.xlsx(yellow_green2, file="data/colour_between_species_2021Mar17.xlsx", sheetName="Yellow-Green", 
+#            append=TRUE)
+# write.xlsx(yellow_brown2, file="data/colour_between_species_2021Mar17.xlsx", sheetName="Yellow-Brown", 
+#            append=TRUE)
+# 
+# # tabs for each color: examples removed when filtering using L*a*b* space thresholds
+# write.xlsx(green_removed, file="data/colour_between_species_2021Mar17.xlsx", sheetName="Green removed (Lab)", 
+#            append=TRUE)
+# write.xlsx(brown_removed, file="data/colour_between_species_2021Mar17.xlsx", sheetName="Brown removed (Lab)", 
+#            append=TRUE)
+# write.xlsx(red_removed, file="data/colour_between_species_2021Mar17.xlsx", sheetName="Red removed (Lab)", 
+#            append=TRUE)
+# write.xlsx(white_removed, file="data/colour_between_species_2021Mar17.xlsx", sheetName="White removed (Lab)", 
+#            append=TRUE)
+# write.xlsx(yellow_green_removed, file="data/colour_between_species_2021Mar17.xlsx", sheetName="Yellow-Green removed (Lab)", 
+#            append=TRUE)
+# write.xlsx(yellow_brown_removed, file="data/colour_between_species_2021Mar17.xlsx", sheetName="Yellow-Brown removed (Lab)", 
+#            append=TRUE)
+# 
+# # tabs for each color: examples discarded when making "pure" colors
+# write.xlsx(green_discards, file="data/colour_between_species_2021Mar17.xlsx", sheetName="Green Discards", 
+#            append=TRUE)
+# write.xlsx(brown_discards, file="data/colour_between_species_2021Mar17.xlsx", sheetName="Brown Discards", 
+#            append=TRUE)
+# write.xlsx(red_discards, file="data/colour_between_species_2021Mar17.xlsx", sheetName="Red Discards", 
+#            append=TRUE)
+# write.xlsx(white_discards, file="data/colour_between_species_2021Mar17.xlsx", sheetName="White Discards", 
+#            append=TRUE)
+# write.xlsx(yellow_green_discards, file="data/colour_between_species_2021Mar17.xlsx", sheetName="Yellow-Green Discards", 
+#            append=TRUE)
+# write.xlsx(yellow_brown_discards, file="data/colour_between_species_2021Mar17.xlsx", sheetName="Yellow-Brown Discards", 
+#            append=TRUE)
 
 
 
