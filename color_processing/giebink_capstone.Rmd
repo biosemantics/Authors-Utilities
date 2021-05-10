@@ -1,0 +1,32 @@
+---
+title: "Capstone"
+author: "Noah Giebink"
+date: "5/8/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(knitr)
+```
+
+## INTRODUCTION
+
+## METHODS
+
+## RESULTS
+The linear SVM had the best performance against the authors' labels in the test set (multiclass mean f1 = 0.4757042), followed by the radial SVM (multiclass mean f1 = 0.4573148), and the manual thresholds approach (mean multiclass f1 = 0.3998657 factoring out performance on 'white' class for equal comparison; else mean multiclass f1 = 0.388777). These results are summarized in tables 1, 2, and 3, respectively.
+
+```{r}
+score_lin <- readRDS('performance/score_lin.rds')
+score_thresholds <- readRDS('performance/score_thresholds.rds')
+kable(score_lin)
+kable(score_thresholds)
+```
+
+## DISCUSSION
+
+### CODE AND REPRODUCIBILITY
+
+## LITERATURE CITED
