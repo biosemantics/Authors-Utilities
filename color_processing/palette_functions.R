@@ -149,7 +149,11 @@ get_lmd <- function(color_df, km_out){
            & cluster != which(km_out$centers == max(km_out$centers)))
   lmd_list[[3]] <- color_df %>%
     filter(cluster == which(km_out$centers == min(km_out$centers)))
-  return(lmd_list)
+  lmd_list[[1]]$brightness = 'light'
+  lmd_list[[2]]$brightness = 'medium'
+  lmd_list[[3]]$brightness = 'dark'
+  lmd_out <- bind_rows(lmd_list)
+  return(lmd_out)
 }
 
 # Function: rgb_tab() ----
@@ -173,10 +177,17 @@ rgb_tab <- function(rgb_data){
 }
 
 # Function: nn_downsample() ----
-nn_downsample <- function(data, k=3, scale=1/5){
-
+#' Density-dependent down-sampling for data in x-y space. 
+#' Discourages tight clustering of resulting point through a nearest neighbor 
+#' calculation approach, where the probability of appearing in the sample is
+#' equal to the normalized distance to k nearest neighbors.
+#' param data: data frame with 2 columns, where each row is x,y coordinates
+nn_downsample <- function(data, x_col, y_col, k=3, size=10){
+  
   # get distance to k nearest neighbors (excluding nearest: self)
-  nearest <- nn2(data,data, k = k+1)
+  nearest <- nn2(data[,c(x_col,y_col)], 
+                 data[,c(x_col,y_col)], 
+                 k = k+1)
   nn_dist <- as.data.frame(nearest$nn.dists[,2:(k+1)]) 
   mean_dist <- nn_dist %>% rowwise() %>% transmute(mean_dist = mean(c(V1, V2, V3)))
 
@@ -189,13 +200,15 @@ nn_downsample <- function(data, k=3, scale=1/5){
   }
   dist_data <- dist_data %>% mutate(nn_dist_norm = min_max(mean_dist))
 
-  # quantile sampling approach (nothing too close or too far: more evenly spaced?)
-  q25 <- quantile(dist_data$nn_dist_norm)[[2]]
-  q75 <- quantile(dist_data$nn_dist_norm)[[4]]
-  dist_sample <- dist_data %>% filter(nn_dist_norm > q25 & nn_dist_norm < q75)
-  dist_sample <- dist_sample[sample(nrow(dist_sample), size = 20),]
+  # # quantile sampling approach (nothing too close or too far: more evenly spaced?)
+  # q25 <- quantile(dist_data$nn_dist_norm)[[2]]
+  # q75 <- quantile(dist_data$nn_dist_norm)[[4]]
+  # dist_sample <- dist_data %>% filter(nn_dist_norm > q25 & nn_dist_norm < q75)
+  # dist_sample <- dist_sample[sample(nrow(dist_sample), size = 20),]
+  
+  dist_sample <- dist_data[sample(nrow(dist_data), size = size, prob=dist_data$nn_dist_norm),]
 
-return(dist_sample)
+  return(dist_sample)
 }
 
 # # simulate points data
@@ -241,7 +254,7 @@ centroid_color <- function(data){
 
 # Function mark_samples() ----
 mark_samples <- function(x, ...) {
-  samples = list(...)
+  samples <- list(...)
   marked <- mutate(x, color = if_else(rgb(x$Red/255, x$Green/255, x$Blue/255) %in% samples, "sample", x$color))
   return(marked)
 }
@@ -305,3 +318,52 @@ vis_breaks <- function(data, dimension, bin_width, ...){
     theme_pubr()
   return(out)
 }
+
+# Function: score ----
+#' Compute precision, recall, and f1 score for each class
+
+score <- function(predicted, expected){
+  cm <- as.matrix(table(expected, predicted))
+  precision <- diag(cm) / colSums(cm)
+  recall <- diag(cm) / rowSums(cm)
+  f1 <- 2*precision*recall / (precision + recall)
+  return(data.frame(precision, recall, f1))
+  
+  # print(paste("precision: ", precision, "recall: ", recall, "f1 :", f1))
+  # return(list(precision, recall, f1))
+}
+
+# Function: rgb_palette ----
+rgb_palette <- function(..., color_names){
+  rgb_data <- list(...)
+  samples <- list()
+  for (i in 1:length(rgb_data)){
+    # calculate color fill value
+    rgb_data[[i]]$color_fill <- rgb(rgb_data[[i]]$Red/255,
+                                    rgb_data[[i]]$Green/255,
+                                    rgb_data[[i]]$Blue/255)
+    # unite species name and id
+    samples[[i]] <- unite(rgb_data[[i]], col=source, Species, id, sep = ' ')
+    # select relevant columns
+    rgb_data[[i]] <- select(rgb_data[[i]], color_fill)
+    samples[[i]] <- select(samples[[i]], source)
+    # rename rgb column to color_names[[i]]
+    colnames(rgb_data[[i]])[1] <- color_names[[i]]
+    # rename source column to the same color_names[[i]]
+    colnames(samples[[i]])[1] <- color_names[[i]]
+  }
+  rgb_val <- bind_cols(rgb_data)
+  samples_tab <- bind_cols(samples)
+  tab <- ggtexttable(samples_tab)
+  for(c in 1:ncol(samples_tab)){
+    col = c+1
+    for(r in 1:nrow(samples_tab)){
+      row = r+1
+      tab <- table_cell_bg(tab, row=row,
+                           column=col,
+                           fill=rgb_val[r,c])
+    }
+  }
+  return(tab)
+}
+
