@@ -54,116 +54,229 @@ colors_full <- colors_full %>% select(Species, Red, Green, Blue, id)
 Lab_features <- convertColor(colors_full[2:4], 'sRGB', 'Lab', scale.in = 255)
 colors_full <- cbind(colors_full, Lab_features)
 
+
+# build palette: split colors ----
+# Split colors using both methods: linear SVM and thresholds
+
 # apply thresholds function to label colors 
-colors_full <- thresholds(colors_full)
+colors_full_thresholds <- thresholds(colors_full)
 
-# Fine-tuning ----
+# predict with linear SVM
+svm_final <- readRDS("model/svm_linear.rds")
+colors_full_svm <- predict(svm_final, colors_full[,c('a','b')])
+colors_full_svm <- data.frame(colors_full_svm)
+colors_full_svm <- colors_full_svm %>% rename(color = colors_full_svm)
+colors_full_svm <- bind_cols(colors_full, colors_full_svm)
 
-# find natural breaks in color distribution histograms for white and brown (tan?)
-# white
-white <- filter(colors_full, color=='white')
+# apply k-means to separate each color into light, medium, and dark
+set.seed(42)
 
-ggplot(white, aes(x = b)) +
-  geom_density(fill = centroid_color(white), color='black') +
-  scale_x_continuous(breaks = seq(0,30,2)) +
-  theme_pubr()
+# thresholds data
+km_thresholds <- colors_full_thresholds %>% group_by(color) %>% group_map(~ kmeans(.x$L, 3))
 
-white <- mutate(white, bin = ifelse(b<18, 'white', 'brown'))
+brown_full <- get_lmd(mutate(filter(colors_full_thresholds, color=='brown'), 
+                             cluster = km_thresholds[[1]]$cluster), 
+                      km_thresholds[[1]])
+green_full <- get_lmd(mutate(filter(colors_full_thresholds, color=='green'), 
+                             cluster = km_thresholds[[2]]$cluster), 
+                      km_thresholds[[2]])
+red_full <- get_lmd(mutate(filter(colors_full_thresholds, color=='red'), 
+                             cluster = km_thresholds[[3]]$cluster), 
+                      km_thresholds[[3]])
+white_full <- get_lmd(mutate(filter(colors_full_thresholds, color=='white'), 
+                             cluster = km_thresholds[[4]]$cluster), 
+                      km_thresholds[[4]])
+yb_full <- get_lmd(mutate(filter(colors_full_thresholds, color=='yellow-brown'), 
+                             cluster = km_thresholds[[5]]$cluster), 
+                      km_thresholds[[5]])
+yg_full <- get_lmd(mutate(filter(colors_full_thresholds, color=='yellow-green'), 
+                             cluster = km_thresholds[[6]]$cluster), 
+                      km_thresholds[[6]])
+
+colors_full_thresholds_lmd <- bind_rows(brown_full, green_full, red_full,
+                                        white_full, yb_full, yg_full)
+
+# svm data
+km_svm <- colors_full_svm %>% group_by(color) %>% group_map(~ kmeans(.x$L, 3))
+
+brown_full_svm<- get_lmd(mutate(filter(colors_full_svm, color=='brown'), 
+                             cluster = km_svm[[1]]$cluster), 
+                      km_svm[[1]])
+green_full_svm<- get_lmd(mutate(filter(colors_full_svm, color=='green'), 
+                             cluster = km_svm[[2]]$cluster), 
+                      km_svm[[2]])
+red_full_svm<- get_lmd(mutate(filter(colors_full_svm, color=='red'), 
+                           cluster = km_svm[[3]]$cluster), 
+                    km_svm[[3]])
+yb_full_svm<- get_lmd(mutate(filter(colors_full_svm, color=='yellow-brown'), 
+                          cluster = km_svm[[4]]$cluster), 
+                   km_svm[[4]])
+yg_full_svm <- get_lmd(mutate(filter(colors_full_svm, color=='yellow-green'), 
+                          cluster = km_svm[[5]]$cluster), 
+                   km_svm[[5]])
+
+colors_full_svm_lmd <- bind_rows(brown_full_svm, green_full_svm, red_full_svm,
+                                 yb_full_svm, yg_full_svm)
 
 
-white_breaks <- ggplot(white, aes(x = b, fill = bin)) +
-  geom_histogram(color='black') +
-  scale_fill_manual(values=c(centroid_color(filter(white, bin=='brown')), 
-                             centroid_color(filter(white, bin=='white')))) +
-  theme_pubr()
+# # save full data sets for visualization step (already run)
+# saveRDS(colors_full_thresholds_lmd, 'data/colors_full_thresholds_lmd.rds')
+# saveRDS(colors_full_svm_lmd, 'data/colors_full_svm_lmd.rds')
+
+# # if need to read back in
+# colors_full_thresholds_lmd <- readRDS('data/colors_full_thresholds_lmd.rds')
+# colors_full_svm_lmd <- readRDS('data/colors_full_svm_lmd.rds')
+
+# build palette: sample final colors, tabulate ----
+
+# # down sample each color-brightness combination to 10 samples for tabular 
+# colors_down_svm <- colors_full_svm_lmd %>% 
+#   group_by(color, brightness) %>% 
+#   group_map(~ nn_downsample(.x, 'a', 'b')) %>% 
+#   bind_rows() %>%
+#   left_join(.,colors_full_svm_lmd)
 
 
-# discard
-# find natural break in 'a' where yellow-green becomes green
-# bind to yellow-green
-yellow_green <- colors_full %>% filter(color=='yellow-green')
-discards <- colors_full %>% filter(color=='discard')
-yellow_green2 <- bind_rows(yellow_green, discards)
+# # IF down sampling to 10 per color-brightness combo:
+# # need to do white separately for thresholds data because there are too few obs
+# colors_nowhite_thresholds_lmd <- filter(colors_full_thresholds_lmd, color !='white')
+# white_thresholds_lmd <- filter(colors_full_thresholds_lmd, color =='white')
+# 
+# colors_down_thresholds <- colors_nowhite_thresholds_lmd %>% 
+#   group_by(color, brightness) %>% 
+#   group_map(~ nn_downsample(.x, 'a', 'b')) %>%
+#   bind_rows() %>%
+#   left_join(.,colors_full_thresholds_lmd)
+# white_down_thresholds <- white_thresholds_lmd %>% 
+#   group_by(color, brightness) %>% 
+#   group_map(~ nn_downsample(.x, 'a', 'b', size=9)) %>%
+#   bind_rows() %>%
+#   left_join(.,white_thresholds_lmd)
+# colors_down_thresholds <- bind_rows(colors_down_thresholds, white_down_thresholds)
 
-yg <- mutate(yellow_green2, bin=ifelse(a > -9, 'yellow-green', 'green'))
+# use 5 samples per brightness-color combo
+colors_down_svm <- colors_full_svm_lmd %>%
+  group_by(color, brightness) %>%
+  group_map(~ nn_downsample(.x, 'a', 'b', size=5)) %>%
+  bind_rows() %>%
+  left_join(.,colors_full_svm_lmd)
+colors_down_thresholds <- colors_full_thresholds_lmd %>%
+  group_by(color, brightness) %>%
+  group_map(~ nn_downsample(.x, 'a', 'b', size=5)) %>%
+  bind_rows() %>%
+  left_join(.,colors_full_thresholds_lmd)
 
 
-yg_breaks <- ggplot(yg, aes(x = a, fill = bin)) +
-  geom_histogram(color='black') +
-  scale_fill_manual(values=c(centroid_color(filter(discards, bin=='green')), 
-                             centroid_color(filter(discards, bin=='yellow-green')))) +
-  theme_pubr()
+# tabulate color palettes
 
-# red
-# find natural break in 'b' where red becomes yellow-brown
+palette_svm <- rgb_palette(arrange(filter(colors_down_svm, color=='brown'), desc(L)), 
+                           arrange(filter(colors_down_svm, color=='green'), desc(L)),
+                           arrange(filter(colors_down_svm, color=='red'), desc(L)),
+                           arrange(filter(colors_down_svm, color=='yellow-brown'), desc(L)),
+                           arrange(filter(colors_down_svm, color=='yellow-green'), desc(L)),
+                           color_names = list('Brown', 'Green', 'Red', 'Yellow-brown', 'Yellow-green'))
 
-red <- colors_full %>% filter(color=='red')
-red <- mutate(red, bin=ifelse(b<18, 'red', 'yellow-brown'))
+palette_thresholds <- rgb_palette(arrange(filter(colors_down_thresholds, color=='brown'), desc(L)), 
+                                  arrange(filter(colors_down_thresholds, color=='green'), desc(L)),
+                                  arrange(filter(colors_down_thresholds, color=='red'), desc(L)),
+                                  arrange(filter(colors_down_thresholds, color=='white'), desc(L)),
+                                  arrange(filter(colors_down_thresholds, color=='yellow-brown'), desc(L)),
+                                  arrange(filter(colors_down_thresholds, color=='yellow-green'), desc(L)),
+                                  color_names = list('Brown', 'Green', 'Red', 'White','Yellow-brown', 'Yellow-green'))
 
-ggplot(red, aes(x=b))+
-  geom_histogram(color='black', binwidth=1)
 
-red_breaks <- ggplot(red, aes(x=b, fill=bin))+
-  geom_histogram(color='black', binwidth = 1) +
-  scale_fill_manual(values=c(centroid_color(filter(red, bin=='red')),
-                             centroid_color(filter(red, bin=='yellow-brown')))) +
-  theme_pubr()
+palettes <- ggarrange(palette_thresholds, palette_svm, ncol=1, nrow=2)
 
-# brown
-brown <- colors_full %>% filter(color=='brown')
-brown <- mutate(brown, bin=ifelse(b<18, 'brown', 'yellow-brown'))
-
-ggplot(brown, aes(x=b))+
-  geom_histogram(color='black', binwidth=1)
-
-red_breaks <- ggplot(red, aes(x=b, fill=bin))+
-  geom_histogram(color='black', binwidth = 1) +
-  scale_fill_manual(values=c(centroid_color(filter(red, bin=='red')),
-                             centroid_color(filter(red, bin=='yellow-brown')))) +
-  scale_x_continuous(breaks = seq(0,50,2)) +
-  theme_pubr()
 
 # Visualization ----
-# get sample color 
-sample_brown = centroid_color(filter(colors_full, color=='brown'))
-sample_green = centroid_color(filter(colors_full, color=='green'))
-sample_red = centroid_color(filter(colors_full, color=='red'))
-sample_white = centroid_color(filter(colors_full, color=='white'))
-sample_yellow_brown = centroid_color(filter(colors_full, color=='yellow-brown'))
-sample_yellow_green = centroid_color(filter(colors_full, color=='yellow-green'))
-sample_discard = centroid_color(filter(colors_full, color=='discard'))
-
-# change name of sample color to "sample" to use as reference point
-colors_full_marked <- mark_samples(colors_full, sample_green, sample_brown, sample_red, 
-                                       sample_white, sample_yellow_green, sample_yellow_brown,
-                                       sample_discard)
-
-# set plot limits
 x_min <- -25
 x_max <- 30
 y_min <- -5
 y_max <- 60
 
-color_space_full <- ggplot(colors_full_marked, aes(x=a, y=b, color=color)) +
-  geom_point(alpha=1/2) +
-  # facet_grid(rows=vars(color), cols=vars(L_bin)) +
-  scale_color_manual(values=c(sample_brown, sample_discard, sample_green, sample_red, "red", sample_white,
-                              sample_yellow_brown, sample_yellow_green)) +
-  ylab('Blue-Yellow') +
-  xlab('Green-Red') +
+# mark samples
+colors_full_svm_lmd$color <- as.character(colors_full_svm_lmd$color)
+svm_marked <- mark_samples(colors_full_svm_lmd,
+                                  centroid_color(filter(colors_full_svm_lmd, color == 'brown')),
+                                  centroid_color(filter(colors_full_svm_lmd, color == 'green')),
+                                  centroid_color(filter(colors_full_svm_lmd, color == 'red')),
+                                  centroid_color(filter(colors_full_svm_lmd, color == 'yellow-brown')),
+                                  centroid_color(filter(colors_full_svm_lmd, color == 'yellow-green')))
+colors_full_thresholds_lmd$color <- as.character(colors_full_thresholds_lmd$color)
+thresholds_marked <- mark_samples(colors_full_thresholds_lmd,
+                                  centroid_color(filter(colors_full_thresholds_lmd, color == 'brown')),
+                                  centroid_color(filter(colors_full_thresholds_lmd, color == 'green')),
+                                  centroid_color(filter(colors_full_thresholds_lmd, color == 'red')),
+                                  centroid_color(filter(colors_full_thresholds_lmd, color == 'white')),
+                                  centroid_color(filter(colors_full_thresholds_lmd, color == 'yellow-brown')),
+                                  centroid_color(filter(colors_full_thresholds_lmd, color == 'yellow-green')))
+
+
+color_space_full_thresholds <- ggplot(thresholds_marked,  
+                           aes(a, b, color = color))+
+  geom_point(size = 1.25)+
+  scale_color_manual(values=c(centroid_color(filter(colors_full_thresholds_lmd, color=='brown')),
+                              centroid_color(filter(colors_full_thresholds_lmd, color=='green')),
+                              centroid_color(filter(colors_full_thresholds_lmd, color=='red')),
+                              'red',
+                              centroid_color(filter(colors_full_thresholds_lmd, color=='white')),
+                              centroid_color(filter(colors_full_thresholds_lmd, color=='yellow-brown')),
+                              centroid_color(filter(colors_full_thresholds_lmd, color=='yellow-green'))))+
+  geom_point(data = filter(thresholds_marked, color == 'sample'), size = 1.5)+
+  labs(x = 'Green-Red', y = 'Blue-Yellow', color='Color')+
   ylim(c(y_min, y_max)) +
   xlim(c(x_min, x_max)) +
-  geom_rect(xmin = 10, xmax = x_max, ymin = y_min, ymax = y_max, color = sample_red, alpha = 0) + 
-  geom_rect(xmin = 0, xmax = 10, ymin = y_min, ymax = 30, color = sample_brown, alpha = 0) +
-  geom_rect(xmin = x_min, xmax = -5, ymin = y_min, ymax = 30, color = sample_green, alpha = 0) +
-  geom_rect(xmin = -15, xmax = -2, ymin = 30, ymax = y_max, color = sample_yellow_green, alpha = 0) +
-  geom_rect(xmin  =  -2, xmax = 10, ymin = 30, ymax = y_max, color = sample_yellow_brown, alpha = 0) +
-  theme(legend.text = element_text(size=16),
-        legend.title = element_text(size=16),
+  geom_rect(xmin = 10.2, xmax = x_max, ymin = y_min, ymax = 24.8, 
+            color = centroid_color(filter(colors_full_thresholds_lmd, color=='red')), 
+            alpha = 0, size = 1.5) +
+  geom_rect(xmin = -1.8, xmax = 9.8, ymin = y_min, ymax = 31.8, 
+            color = centroid_color(filter(colors_full_thresholds_lmd, color=='brown')), 
+            alpha = 0, size = 1.5) +
+  geom_rect(xmin = 10.2, xmax = x_max, ymin = 25.2, ymax = y_max, 
+            color = centroid_color(filter(colors_full_thresholds_lmd, color=='brown')), 
+            alpha = 0, size = 1.5) +
+  geom_rect(xmin = x_min, xmax = -2.2, ymin = y_min, ymax = 31.8, 
+            color = centroid_color(filter(colors_full_thresholds_lmd, color=='green')), 
+            alpha = 0, size = 1.5) +
+  geom_rect(xmin = x_min, xmax = -12.2, ymin = 32.2, ymax = y_max, 
+            color = centroid_color(filter(colors_full_thresholds_lmd, color=='green')), 
+            alpha = 0, size = 1.5) +
+  geom_rect(xmin = -11.8, xmax = -2.2, ymin = 32.2, ymax = y_max, 
+            color = centroid_color(filter(colors_full_thresholds_lmd, color=='yellow-green')), 
+            alpha = 0, size = 1.5) +
+  geom_rect(xmin  =  -1.8, xmax = 9.8, ymin = 32.2, ymax = y_max, 
+            color = centroid_color(filter(colors_full_thresholds_lmd, color=='yellow-brown')), 
+            alpha = 0, size = 1.5) +
+  geom_rect(xmin  =  -5, xmax = 0, ymin = y_min, ymax = 20, 
+            color = centroid_color(filter(colors_full_thresholds_lmd, color=='white')), 
+            alpha = 0, size = 1.5) +
+  theme_pubr() +
+  theme(legend.text = element_text(size=10),
+        legend.title = element_text(size=12),
         axis.title = element_text(size = 16),
-        axis.text = element_text(size = 12)) +
-  geom_point(data=filter(colors_full_marked, color=='sample'))
+        axis.text = element_text(size = 10)) 
 
+color_space_full_svm <- ggplot(svm_marked,  
+                               aes(a, b, color = color))+
+  geom_point(size = 1.25)+
+  scale_color_manual(values=c(centroid_color(filter(colors_full_svm_lmd, color=='brown')),
+                              centroid_color(filter(colors_full_svm_lmd, color=='green')),
+                              centroid_color(filter(colors_full_svm_lmd, color=='red')),
+                              'red',
+                              centroid_color(filter(colors_full_svm_lmd, color=='yellow-brown')),
+                              centroid_color(filter(colors_full_svm_lmd, color=='yellow-green'))))+
+  geom_point(data=filter(svm_marked, color=='sample'), size = 1.25)+
+  labs(x = 'Green-Red', y = 'Blue-Yellow', color='Color')+
+  ylim(c(y_min, y_max)) +
+  xlim(c(x_min, x_max)) +
+  theme_pubr()+
+  theme(legend.text = element_text(size=10),
+        legend.title = element_text(size=12),
+        axis.title = element_text(size = 16),
+        axis.text = element_text(size = 10)) 
 
-# save full color space
-ggsave('./plots/color_space_full.png', color_space_all, width = 10, height = 8)
+color_spaces_full <- ggarrange(color_space_full_thresholds, color_space_full_svm)
+
+# save visualizations (already run) ----
+# ggsave('plots/final/palettes.png', palettes, width = 16, height = 10)
+# ggsave('plots/final/color_spaces_full.png', color_spaces_full, width = 10, height = 5)
