@@ -1176,8 +1176,12 @@ label_test_plot <- ggplot(label_test, aes(x = color, y = proportion, fill = labe
                              centroid_color(filter(colors_labeled, color=='white')),
                              centroid_color(filter(colors_labeled, color=='yellow-brown')),
                              centroid_color(filter(colors_labeled, color=='yellow-green'))))+
-  labs(x='Color Classification', y='Frequency', fill='Author Label Category')+
-  theme_pubr()
+  labs(x='Color Classification (Thresholds)', y='Frequency', fill='Author Label')+
+  theme_pubr()+
+  theme(legend.text = element_text(size=10),
+        legend.title = element_text(size=12),
+        axis.title = element_text(size = 16),
+        axis.text = element_text(size = 10)) 
 
 # color test
 color_test <- colors_labeled %>% group_by(label, color, .drop=FALSE) %>% tally()
@@ -1203,6 +1207,7 @@ color_test_plot <- ggplot(color_test, aes(x = label, y = proportion, fill = colo
 # ggsave('plots/final/splits_whitish.png', splits_whitish, width = 10, height = 5)
 # ggsave('plots/final/rgb_axis_distributions.png', rgb_box, width = 5, height = 5)
 # ggsave('plots/final/spaces_rgb_vs_lab.png', spaces, width = 10, height = 15)
+# ggsave('plots/final/label_vs_color.png', label_test_plot, width = 10, height = 5)
 
 
 
