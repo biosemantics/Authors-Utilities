@@ -4,7 +4,9 @@
 .Ruserdata
 
 # files
-data/
 
 # plots
 plots/
+
+# competencies file
+competencies*

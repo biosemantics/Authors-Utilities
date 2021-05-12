@@ -1,7 +1,7 @@
 ---
 title: "Capstone: A Custom _Carex_ Color Palette"
 author: "Noah Giebink"
-date: "5/8/2021"
+date: "Spring, 2021"
 output: pdf_document
 ---
 
@@ -14,7 +14,7 @@ library(knitr)
 ## ABSTRACT
 
 
-Color is a conspicuous and variable trait across plants, yet it is challenging to glean taxonomic insight from color descriptions when the language used to describe color traits is inconsistent. The objective of the present study is to encourage a controlled color vocabulary by building a custom color palette tool which helps authors choose standardized color descriptions for plant specimens. Focusing on the genus _Carex_, I integrated data from author descriptions in Flora of North America Vol. 23 with corresponding ground truth color measurements to map real-life quantitative color values with the language used to describe them. Color descriptions fell within a small set of frequent color classes: brown, green, red, white, yellow-green, and yellow-brown. However, the striking overlap in the measured color values for samples given each of these names by authors further necessitates a controlled color vocabulary. Given color values and the color class for a subset of samples, I compared manual and machine learning approaches for predicting color class boundaries and present a proposed color palette for each.
+Color is a conspicuous and variable trait across plants, yet it is challenging to glean taxonomic insight from color descriptions when the language used to describe color traits is inconsistent. The objective of the present study is to encourage a controlled color vocabulary by building a custom color palette tool which helps authors choose standardized color descriptions for plant specimens. Focusing on the genus _Carex_, I integrated data from author descriptions in Flora of North America Vol. 23 with corresponding ground truth color measurements to map real-life quantitative color values with the language used to describe them. Color descriptions fell within a small set of frequent color classes: brown, green, red, white, yellow-green, and yellow-brown. However, the striking overlap in the measured color values for samples given each of these names by authors further necessitates a controlled color vocabulary. Given color values and the color class for a subset of samples, I compared manual and machine learning approaches for predicting color class boundaries and proposed a color palette for each.
 
 
 ## INTRODUCTION  
@@ -44,31 +44,38 @@ I investigated the efficacy of representing real sample colors in L\*a\*b\* spac
 ##### Data Sources  
 
 
-I joined two data sources: species level color descriptions from the Flora of North America Vol. 23 (henceforth "author descriptions") (FNA; www.eflora.org.), and species to subspecies level ground truth, sRGB channel color measurements of specimen images (henceforth color measurements"). Specimen images for a total of 456 species were curated, mostly from online data sharing platforms (e.g. SeiNet, Intermountain Regional Herbarium Network). Specimens were filtered for quality such that all were high resolution, lacked preventable discoloration, and had a color control reference. For species whose specimens failed to meet these standards, original images were captured the herbaria of the Canadian Museum of Nature (CAN), Agriculture and Agri-Food Canada (DAO), or the Marie-Victorin Herbarium (MT). sRGB values were taken from each specimen over several pixels using ImageJ (ver. 1.50i; Schindelin et al., 2012). Author descriptions were specific to tissues including leaf, male scale, perigynium, female scale, and cataphyll. For both author descriptions and color measurements, I discarded observations from male and female scales because these were the average of the margin, blade, and axis and were thus not "real" colors shown on the specimen. I used the joined data set with both author descriptions and color measurements to manually sort colors into classes and further partitioned the data into train and test sets to train support vector machines for an automated approach. Table 1 includes sample sizes of each data set used. 
+I joined two data sources provided by collaborators at the University of Ottawa: species-level, taxonomic color description strings from the Flora of North America Vol. 23 (e.g. short phrases like "pale brown to copper;" henceforth "*author descriptions*") (FNA; www.eflora.org.), and species to subspecies-level ground truth, sRGB channel color measurements of specimen images (henceforth *color measurements*"). Specimen images for a total of 456 species were curated mostly from online data sharing platforms (e.g. SeiNet, Intermountain Regional Herbarium Network). Specimens were filtered for quality such that all were high resolution, lacked preventable discoloration, and had a color control reference. For species whose specimens failed to meet these standards, original images were captured from the herbaria of the Canadian Museum of Nature (CAN), Agriculture and Agri-Food Canada (DAO), or the Marie-Victorin Herbarium (MT). sRGB values were taken from each specimen over several pixels using ImageJ (ver. 1.50i; Schindelin et al., 2012). Author descriptions were specific to tissues including leaf, male scale, perigynium, female scale, and cataphyll. For both author descriptions and color measurements, I discarded observations from male and female scales because these were the average of the margin, blade, and axis and were thus not "real" colors shown on the specimen. I used the joined data set with both author descriptions and color measurements to manually sort colors into classes and further partitioned the data into train and test sets to train support vector machines for an automated approach. Table 1 includes sample sizes of each data set used. 
 
 
 
 ```{r, echo=FALSE}
-sample_sizes <- data.frame('Data Set' = c('Color Measurements', 'Author Descriptions', 'Train', 'Train Down Sampled',  'Test'), 'Observations' = c(2883, 956, 631, 215, 161))
-kable(sample_sizes, col.names = gsub("[.]", " ", names(sample_sizes)), caption = 'Sample size for each data set.')
+sample_sizes <- data.frame('Data Set' = c('Color Measurements', 'Author Descriptions', 'Measurements + Descriptions', 'Measurements (Full)', 'Train', 'Train Down Sampled',  'Test'),
+                           'Observations' = c(2883, 793, 956, 2883, 631, 215, 158),
+                           'Key Features' = c('species, organ, RGB values', 'species, organ, color description', 
+                                              'species, organ, color description, author label, RGB values, Lab values',
+                                              'species, organ, RGB values, Lab values',
+                                              'ab values, author label',
+                                              'ab values, author label',
+                                              'ab values, author label'))
+kable(sample_sizes, col.names = gsub("[.]", " ", names(sample_sizes)), caption = 'Sample size and key features included in each data set. L values were not used in training to avoid splitting colors along lightness value, which is independent from color value in Lab space. Lightness must vary within predicted color classes to produce light, medium, and dark samples for each color class in the palette.')
 ```
 
 
 #### Color Classes
 
 
-I mined author description texts to identify the color classes present (R package 'tm'; Feinerer et al., 2008). I first found the most frequent single-word color terms, not including stop words, used in author descriptions. I selected the most frequent terms (classes) and manually grouped the remaining terms with these classes as synonyms for their respective class, according to my subjective judgement of equivalence (Table 2). I validated these color classes and synonym groupings by subjecting them to review by three *Carex* experts. 
+I mined taxonomic color description strings (author descriptions) to identify the color classes present. I first found the most frequent single-word terms, not including stop words, used in author descriptions (R package 'tm'; Feinerer et al., 2008). Given input phrases such as "yellow-brown to dark brown" or "dark maroon," the most common terms aside from stop words were naturally color adjectives. I selected the most frequent terms (classes) and manually grouped the remaining terms with these classes as synonyms for their respective class, according to my subjective judgement of equivalence (Table 2). I validated these color classes and synonym groupings by subjecting them to review by three *Carex* experts. 
 
 
 
 ```{r, echo = FALSE}
-terms <- data.frame('Class' = c('Green', 'Brown', 'Red', 'White', 'Yellow-Brown', 'Yellow-Green'), 'Synonyms' = c('olive', 'castaneous, chestnut, copper, bronze, tan, tawny', 'maroon', 'gray, glaucous', 'green-yellow, yellow, golden, straw, gold', 'yellow'))
-
+terms <- data.frame('Class' = c('Green', 'Brown', 'Red', 'White', 'Yellow-Brown', 'Yellow-Green'), 'Synonyms' = c('olive', 'castaneous, chestnut, copper, bronze, tan, tawny', 'maroon', 'gray, glaucous', 'yellow, green-yellow, golden, straw, gold', 'yellow, golden, straw, gold'))
+kable(terms, caption = 'Terms used for author labels/color classes and their synonyms used in this study.')
 ```
 
 
 
-I converted each author description string into a single color class (henceforth "author label") based on the color class terms and synonyms present in the string. This wass a two-step process applied to each class and its synonyms: first, I filtered observations containing any one of the synonyms in a color class; second, I filtered the result of the first step to contain only the observations unique to each color class so that no observation had more than one color class. The result was a single color class label for each observation.
+I converted each author description string into a single-term author label based on the color class terms or a synonym for a color class term present in the string (e.g. "dark maroon" -> "red;" henceforth "*author label*"). This was a two-step process applied to each class and its synonyms: first, I filtered observations containing any one of the synonyms in a color class; second, I filtered the result of the first step to retain only the observations unique to each color class so that no observation had more than one color class. The result was a single color class label for each observation.
 
 ##### Color Space Transformation  
 
@@ -79,25 +86,25 @@ I engineered features in L\*a\*b\* space from sRGB input values using the conver
 #### Manual Approach - Thresholds  
 
 
-I relied on natural breaks in the distribution of samples along a\* and b\* axes to set thresholds which divide colors. I continued to manually separate the data this way into sequentially smaller bins until they resembled the color classes brown, green, red, white, yellow-brown, and yellow-green. I visualize the full sequence of divisions in Figures 1-4. I color-code figures 1-4 and 6-8 with the actual values of samples which represent that respective color class or distribution of colors. I found each representative "centroid" by taking the mean a\* - b\* value of a set of samples, then calculating the nearest neighbor to the mean, an actual measurement. A limitation of this method is that it can only divide samples (create "thresholds") along vertical and horizontal lines: intercepts along the a\* and b* axes, and rectangles formed via the combination of these thresholds.
+I relied on natural breaks in the distribution of samples along a\* and b\* axes to set thresholds which divide colors. I continued to manually separate the data this way into sequentially smaller bins until they resembled the color classes brown, green, red, white, yellow-brown, and yellow-green. I visualize the full sequence of divisions in Figures 1-4. I color-code figures 1-4 and 6-8 with the actual values of samples which represent that respective color class or distribution of colors. I found each representative "centroid" by taking the mean a\*, b\* value of a set of samples, then calculating the nearest neighbor to the mean, an actual measurement. A limitation of this method is that it can only divide samples (create "thresholds") along vertical and horizontal lines: intercepts along the a\* and b* axes, and rectangles formed via the combination of these thresholds.
 
 
 #### Support Vector Machine Approach  
 
 
-To overcome the limited division lines limitation of the manual thresholds approach, and because the author label data--while noisy--appear to be linearly or nearly linearly separable (Figure 6, bottom right), I trained two SVM models to predict color class (Meyer et al., 2021), one with the default radial kernel and the other linear. To overcome the class imbalance, I down sampled the data so that all classes had the same n, equal to the smallest class (Caret R package; Kuhn, 2020). I removed the white class entirely from the training and testing data since it would cause to great a reduction in the sample size for the other classes. Finally, I increased the regularization hyperparameter C from default 1 to 0.5 to penalize the model less for misclassifying noisy points. Finally, I calculated class-wise precision, recall, and f1 scores for both models and selected the model with the greatest mean f1 for the ultimate color palette.
+To overcome the the manual thresholds' constraint to horizontal and vertical class division lines, and because the author label data--while noisy--appeared to be linearly or nearly linearly separable (Figure 6, bottom right), I trained two SVM models to predict color class given a\*b\* values and the single-word author label. One SVM used the default radial kernel and the other used a linear kernel (e1071 R package; Meyer et al., 2021). To overcome the class imbalance (Table 3), I down sampled train so that all classes had the same n, equal to the smallest class (Caret R package; Kuhn, 2020). I removed the white class entirely from the training and testing data since it would cause to great a reduction in the sample size for the other classes. Finally, I increased the regularization hyperparameter C from default 1 to 0.5 to penalize the model less for misclassifying noisy points. Finally, I calculated class-wise precision, recall, and f1 scores for both models and selected the model with the greatest mean f1 for the ultimate color palette.
 
 
 ```{r, echo=FALSE}
 model_samples <- readRDS('model/model_samples.rds')
-kable(model_samples, caption = "Class-wise sample sizes for developing thresholds ('Full Labeled Set') and SVM models ('Train Down Sampled (no white)'). SVM models and thresholds performance were assessed with a common test set (Test), except class 'white' was excluded from SVM model assessment.")
+kable(model_samples, caption = "Class-wise sample sizes for developing thresholds ('Full Labeled Set') and SVM models ('Train Down Sampled (no white)'). Down sampling each class to the smallest class sample size (exluding white) eliminated the class imbalance problem. SVM models and thresholds performance were assessed with a common test set (Test), except class 'white' was excluded from SVM model assessment.")
 ```
 
 
-#### Final Color Palette
+#### Final Color Palettes
 
 
-I split the full data set (n = 2883; see Table 1) along color class thresholds defined via the manual thresholds method and predicted color class from a\* and b\* features using the best performing SVM. I further separated each resulting color class into light, medium, and dark using k-means on the L\* variable, with k=3. To choose a reasonable number of color samples for users to select from and visualize, I sampled five values in each lightness level of each color class predicted by each approach. I down sampled using a custom algorithm which calculates the mean distance to k nearest neighbors for each point ("mean_dist"; default k = 3 used here), and samples the points with probability equal to the normalized mean_dist such that points with lower mean_dist (i.e. nearer neighbors) are less likely to be sampled. This allowed me to select a sample of colors to present in the palette which should be less redundant perceptually than a simple random sample.
+I predicted color class on the Measurements (Full) set (n = 2883; see Table 1) twice: once for each approach. In one case, I split the observations along color class thresholds defined via the manual thresholds method. In the other case, I predicted color class from a\* and b\* features using the best performing SVM. For both prediction outputs, I further separated each resulting color class into light, medium, and dark using k-means on the L\* variable, with k=3 (Figure 9; light = rows 1-5, medium = 6-10, dark = 11-15). To choose a reasonable number of color samples for users to select from and visualize, I sampled five values in each lightness level of each color class predicted by each approach. To select a sample of colors to present in the palette which were less redundant perceptually than a simple random sample, I created a custom sampling algorithm which calculates the mean distance to k nearest neighbors for each input point ("mean_dist"; default k = 3 used here), and samples the points with probability equal to the normalized mean_dist such that points with lower mean_dist (i.e. nearer neighbors) are less likely to be sampled. 
 
 
 ## RESULTS and DISCUSSION  
@@ -113,7 +120,7 @@ Representing color samples in L\*a\*b\* space led to a greater spread in values 
 #### Q2: Manual vs. Automated Approach  
 
 
-The linear SVM had the best performance against the author labels in the test set (multiclass mean f1 = 0.4757042), followed by the radial SVM (multiclass mean f1 = 0.4573148), and the manual thresholds approach (mean multiclass f1 = 0.3998657 factoring out performance on 'white' class for equal comparison; else mean multiclass f1 = 0.388777). Detailed multiclass precision, recall, and f1 scores are summarized in tables 3 and 4.
+The linear SVM had the best performance against the author labels in the test set (multiclass mean f1 = 0.4757042), followed by the radial SVM (multiclass mean f1 = 0.4573148), and the manual thresholds approach (mean multiclass f1 = 0.3998657 factoring out performance on 'white' class for equal comparison; else mean multiclass f1 = 0.388777). Detailed multiclass precision, recall, and f1 scores are summarized in tables 4 and 5.
 
 
 
@@ -138,7 +145,7 @@ Notably, the thresholds method did not rely on learning the author labels; match
 #### Future Work  
 
 
-The next stage will be to integrate the color palette produced here with web ontogeny software. Then, we will perform usability experiments and test whether the ability to make selections from a color palette containing a subset of real sample values (as shown here) improves consistency of color descriptions.
+The next stage will be to integrate the color palette produced here with web ontology software. Then, we will perform usability experiments and test whether the ability to make selections from a color palette containing a subset of real sample values (as shown here) improves consistency of color descriptions.
 
 
 ### CODE AND REPRODUCIBILITY  
@@ -178,28 +185,28 @@ Rosas‐Guerrero, V., Aguilar, R., Martén‐Rodríguez, S., Ashworth, L., Lopez
 Schindelin, J., Arganda-Carreras, I., Frise, E., Kaynig, V., Longair, M., Pietzsch, T., Preibisch, S., Rueden, C., Saalfeld, S., Schmid, B., Tinevez, J.-Y., White, D. J., Hartenstein, V., Eliceiri, K., Tomancak, P., & Cardona, A. (2012). Fiji: An open-source platform for biological-image analysis. Nature Methods, 9(7), 676–682. https://doi.org/10.1038/nmeth.2019
 
 
-![From left: Green-Red and Blue-Yellow divisions in the whole data set along natural breaks in distributions of color samples along a* (green-red) and b* (blue-yellow) axes of L\*a\*b*. Portions of the distributions are colored according to the sRGB values of centroid samples for corresponding to that portion of the distribution (see methods).](plots/final/splits_main.png)
+![Primary level of division in manual thresholds approach (n = 793). From left: Green-Red (a\* axis) and Blue-Yellow (b\* axis) divisions in the Measurements + Descriptions data set along natural breaks in distributions of color samples. Each color-coded portion of the distribution is colored according to the sRGB values of an actual sample estimated at the center of that portion of the distribution in a\*b\* space (see methods). Generic "more green" and "more red" terms are used for bins because groups of color classes are split along natural breaks shown here (e.g. broad division between {green, yellow-green.](plots/final/splits_main.png)
 
 
-![From left: brown-yellow-brown, brown-red, and red-brown (brown appears in two regions of L\*a\*b\* space) divisions among a\* values greater than -2 (after splitting on natural break in Figure 1, left). Divisions appear along natural breaks in distributions of color samples along a* (green-red) and b* (blue-yellow) axes of L\*a\*b* space. Portions of the distributions are colored according to the sRGB values of centroid samples for corresponding to that portion of the distribution (see methods).](plots/final/splits_brownish.png)
+![Secondary level of division in manual thresholds approach among samples with a\* values greater than -2 (after splitting on natural break in Figure 1, left).From left: brown vs. yellow/brown (b\* axis, n = 217), brown vs. red (a\* axis, n = 561), and red vs. brown (b\* axis, n = 188) (brown appears in two regions of L\*a\*b\* space). Divisions appear along natural breaks in distributions of color samples along a* (green-red) and b* (blue-yellow) axes of L\*a\*b* space. Each color-coded portion of each distribution is colored according to the sRGB values of an actual sample estimated at the center of that portion of the distribution in a\*b\* space (see methods).](plots/final/splits_brownish.png)
 
 
-![From left: green-yellow-green and yellow-green-green (green appears in two regions of L\*a\*b\* space) divions among a\* values less than -2 (after splitting on natural break in Figure 1, left). Divisions appear along natural breaks in distributions of color samples along a* (green-red) and b* (blue-yellow) axes of L\*a\*b* space. Portions of the distributions are colored according to the sRGB values of centroid samples for corresponding to that portion of the distribution (see methods).](plots/final/splits_greenish.png)
+![Secondary level of division in manual thresholds approach among samples with a\* value less than -2 (after splitting on natural break in Figure 1, left)  From left: green vs. yellow-green (b\* axis, n = 232) and yellow-green vs. green (a\* axis, n = 232) (green appears in two regions of L\*a\*b\* space). Divisions appear along natural breaks in distributions of color samples along a\* (green-red) and b\* (blue-yellow) axes of L\*a\*b* space. Each color-coded portion of each distribution is colored according to the sRGB values of an actual sample estimated at the center of that portion of the distribution in a\*b\* space (see methods).](plots/final/splits_greenish.png)
 
 
-![From left: green-white-brown and white-green divions among samples with author label "white." Divisions appear along natural breaks in distributions of color samples along a* (green-red) and b* (blue-yellow) axes of L\*a\*b* space. Portions of the distributions are colored according to the sRGB values of centroid samples for corresponding to that portion of the distribution (see methods).](plots/final/splits_whitish.png)
+![Fine-level division in manual thresholds for an individual color class: "white." From left: green vs. white vs. brown (a\* axis, n = 12) and white vs. other (mostly brown or green, n = 12) divions among samples with author label "white." Divisions appear along natural breaks in distributions of color samples along a* (green-red) and b* (blue-yellow) axes of L\*a\*b* space. Each color-coded portion of the distribution is colored according to the sRGB values of an actual sample estimated at the center of that portion of the distribution in a\*b\* space (see methods).](plots/final/splits_whitish.png)
 
 
-![Red and Green axes in sRGB space contain most of the variance in color values.](plots/final/RGB_axis_distributions.png)
+![Violin plots of distribution of Red, Green, and Blue values for all samples in the Measurements + Descriptions data set. Red and Green axes in sRGB space contain most of the variance in color values.](plots/final/RGB_axis_distributions.png)
 
 
-![Points are colored according to the sRGB values of the centroid point for their class (see methods). The centroid point used for each class is indicated in red.](plots/final/spaces_RGB_vs_lab.png)
+![Distributions of Measurements + Descriptions data set in RG space (left column) vs. a\*b\* space (right column). Color classes are split using the manual thresholds method (top row) and linear SVM (middle row). See distribution of RGB values in Figure 4 for justification of omitting B axis. The bottom row shows the color space distributions of raw author labels for comparison. Each color class is color-coded according to the sRGB values of a sample estimated at the center of the class in a\*b\* space (see methods). The estimated centroid point used to visualize each class is indicated in red. There is a great deal of overlap in the measured color values for the different author labels (e.g. "brown" values scattered throughout) compared to clean separation of color classes by the manual thresholds and linear SVM approaches. However, in in RG space color classes are close together, centroid points for each class (red) are less evenly spread in RG space.](plots/final/spaces_RGB_vs_lab.png)
 
 
-![Color spaces reflecting spatial distribution of each class, predicted on the full data set by the thresholds approach (left) and a linear SVM (right) (n = 2883; see Table 1). Thresholds are shown as rectangles, colored according to the class they separate. Points are colored according to the sRGB values of the centroid point for their class (see methods). The centroid point used for each class is indicated in red.](plots/final/color_spaces_full.png)
+![Color spaces reflecting spatial distribution of each class, predicted on the Measurements (Full) set by the thresholds approach (left) and a linear SVM (right) (n = 2883; see Table 1). Thresholds are shown as rectangles, colored according to the class they separate. Each color class is color-coded according to the sRGB values of a sample estimated at the center of the class in a\*b\* space (see methods). The estimated centroid point used for each class is indicated in red.](plots/final/color_spaces_full.png)
 
 
 ![Frequency of author labels given to each color class, as classified via the thresholds approach.](plots/final/label_vs_color.png)
 
 
-![Final color palettes produced by the thresholds approach (top) and a linear SVM (bottom).](plots/final/palettes.png)
+![Final color palettes produced by the linear SVM (left) and thresholds approach (right). Light = rows 1-5, medium = 6-10, dark = 11-15.](plots/final/palettes.png)

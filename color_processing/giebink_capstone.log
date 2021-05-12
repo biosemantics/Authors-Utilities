@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2021.3.11)  10 MAY 2021 20:21
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2021.3.11)  12 MAY 2021 10:57
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -517,88 +517,104 @@ LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 1
 File: ts1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 ) [1
 
-{/home/noah/.TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2] [3] [4]
+{/home/noah/.TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
+Overfull \hbox (16.57506pt too wide) in alignment at lines 198--216
+ [] [] [] 
+ []
+
+
+Overfull \hbox (16.57506pt too wide) in alignment at lines 216--228
+ [] [] [] 
+ []
+
+
+Overfull \hbox (16.57506pt too wide) in alignment at lines 228--294
+ [] [] [] 
+ []
+
+[2] [3] [4]
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 449.
+(Font)              <10> on input line 563.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 449.
+(Font)              <7> on input line 563.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 449.
-<plots/final/splits_main.png, id=95, 722.7pt x 361.35pt>
+(Font)              <5> on input line 563.
+[5]
+<plots/final/splits_main.png, id=103, 722.7pt x 361.35pt>
 File: plots/final/splits_main.png Graphic file (type png)
 <use plots/final/splits_main.png>
-Package pdftex.def Info: plots/final/splits_main.png  used on input line 490.
+Package pdftex.def Info: plots/final/splits_main.png  used on input line 604.
 (pdftex.def)             Requested size: 469.76045pt x 234.88023pt.
-<plots/final/splits_brownish.png, id=96, 1084.05pt x 361.35pt>
+<plots/final/splits_brownish.png, id=104, 1084.05pt x 361.35pt>
 File: plots/final/splits_brownish.png Graphic file (type png)
 <use plots/final/splits_brownish.png>
-Package pdftex.def Info: plots/final/splits_brownish.png  used on input line 50
-1.
+Package pdftex.def Info: plots/final/splits_brownish.png  used on input line 61
+8.
 (pdftex.def)             Requested size: 469.75496pt x 156.58498pt.
-<plots/final/splits_greenish.png, id=97, 722.7pt x 361.35pt>
+<plots/final/splits_greenish.png, id=105, 722.7pt x 361.35pt>
 File: plots/final/splits_greenish.png Graphic file (type png)
 <use plots/final/splits_greenish.png>
-Package pdftex.def Info: plots/final/splits_greenish.png  used on input line 51
-4.
+Package pdftex.def Info: plots/final/splits_greenish.png  used on input line 63
+3.
 (pdftex.def)             Requested size: 469.76045pt x 234.88023pt.
-<plots/final/splits_whitish.png, id=98, 722.7pt x 361.35pt>
+<plots/final/splits_whitish.png, id=106, 722.7pt x 361.35pt>
 File: plots/final/splits_whitish.png Graphic file (type png)
 <use plots/final/splits_whitish.png>
-Package pdftex.def Info: plots/final/splits_whitish.png  used on input line 527
+Package pdftex.def Info: plots/final/splits_whitish.png  used on input line 647
 .
 (pdftex.def)             Requested size: 469.76045pt x 234.88023pt.
-<plots/final/RGB_axis_distributions.png, id=99, 361.35pt x 361.35pt>
+<plots/final/RGB_axis_distributions.png, id=107, 361.35pt x 361.35pt>
 File: plots/final/RGB_axis_distributions.png Graphic file (type png)
 <use plots/final/RGB_axis_distributions.png>
 Package pdftex.def Info: plots/final/RGB_axis_distributions.png  used on input 
-line 538.
+line 661.
 (pdftex.def)             Requested size: 361.34912pt x 361.34912pt.
-<plots/final/spaces_RGB_vs_lab.png, id=100, 722.7pt x 1084.05pt>
+<plots/final/spaces_RGB_vs_lab.png, id=108, 722.7pt x 867.24pt>
 File: plots/final/spaces_RGB_vs_lab.png Graphic file (type png)
 <use plots/final/spaces_RGB_vs_lab.png>
 Package pdftex.def Info: plots/final/spaces_RGB_vs_lab.png  used on input line 
-545.
-(pdftex.def)             Requested size: 433.63437pt x 650.45157pt.
+669.
+(pdftex.def)             Requested size: 469.76045pt x 563.71257pt.
 
-LaTeX Warning: Float too large for page by 35.96599pt on input line 549.
+LaTeX Warning: Float too large for page by 33.78256pt on input line 685.
 
-<plots/final/color_spaces_full.png, id=101, 722.7pt x 361.35pt>
+<plots/final/color_spaces_full.png, id=109, 722.7pt x 361.35pt>
 File: plots/final/color_spaces_full.png Graphic file (type png)
 <use plots/final/color_spaces_full.png>
 Package pdftex.def Info: plots/final/color_spaces_full.png  used on input line 
-553.
+689.
 (pdftex.def)             Requested size: 469.76045pt x 234.88023pt.
-<plots/final/label_vs_color.png, id=102, 722.7pt x 361.35pt>
+<plots/final/label_vs_color.png, id=110, 722.7pt x 361.35pt>
 File: plots/final/label_vs_color.png Graphic file (type png)
 <use plots/final/label_vs_color.png>
-Package pdftex.def Info: plots/final/label_vs_color.png  used on input line 565
+Package pdftex.def Info: plots/final/label_vs_color.png  used on input line 701
 .
 (pdftex.def)             Requested size: 469.76045pt x 234.88023pt.
-<plots/final/palettes.png, id=103, 3011.25pt x 4818.0pt>
+<plots/final/palettes.png, id=111, 3011.25pt x 4818.0pt>
 File: plots/final/palettes.png Graphic file (type png)
 <use plots/final/palettes.png>
-Package pdftex.def Info: plots/final/palettes.png  used on input line 572.
+Package pdftex.def Info: plots/final/palettes.png  used on input line 708.
 (pdftex.def)             Requested size: 406.50122pt x 650.40195pt.
 
-LaTeX Warning: Float too large for page by 24.47194pt on input line 575.
+LaTeX Warning: Float too large for page by 35.91637pt on input line 712.
 
-[5] [6 <./plots/final/splits_main.png (PNG copy)> <./plots/final/splits_brownis
-h.png (PNG copy)>] [7 <./plots/final/splits_greenish.png (PNG copy)> <./plots/f
-inal/splits_whitish.png (PNG copy)>] [8 <./plots/final/rgb_axis_distributions.p
-ng (PNG copy)>] [9 <./plots/final/spaces_rgb_vs_lab.png (PNG copy)>] [10 <./plo
-ts/final/color_spaces_full.png (PNG copy)> <./plots/final/label_vs_color.png (P
-NG copy)>] [11 <./plots/final/palettes.png>] (./giebink_capstone.aux)
+[6 <./plots/final/splits_main.png (PNG copy)>] [7 <./plots/final/splits_brownis
+h.png (PNG copy)> <./plots/final/splits_greenish.png (PNG copy)>] [8 <./plots/f
+inal/splits_whitish.png (PNG copy)>] [9 <./plots/final/rgb_axis_distributions.p
+ng (PNG copy)>] [10 <./plots/final/spaces_rgb_vs_lab.png (PNG copy)>] [11 <./pl
+ots/final/color_spaces_full.png (PNG copy)> <./plots/final/label_vs_color.png (
+PNG copy)>] [12 <./plots/final/palettes.png>] (./giebink_capstone.aux)
 Package rerunfilecheck Info: File `giebink_capstone.out' has not changed.
 (rerunfilecheck)             Checksum: 860DF266DAFC361D9FDAC9F94D03FD72;738.
  ) 
 Here is how much of TeX's memory you used:
- 12334 strings out of 480971
- 183268 string characters out of 5907895
- 533208 words of memory out of 5000000
- 29129 multiletter control sequences out of 15000+600000
- 457633 words of font info for 134 fonts, out of 8000000 for 9000
+ 12341 strings out of 480971
+ 183334 string characters out of 5907895
+ 536651 words of memory out of 5000000
+ 29130 multiletter control sequences out of 15000+600000
+ 457824 words of font info for 136 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 71i,6n,74p,649b,443s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 71i,6n,74p,1151b,455s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/home/noah/.TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}{/home/noah/.Ti
 nyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}</home/noah/.TinyTeX/texmf-dist/f
 onts/type1/public/lm/lmbx10.pfb></home/noah/.TinyTeX/texmf-dist/fonts/type1/pub
@@ -607,10 +623,10 @@ fb></home/noah/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb></home/noah/
 .TinyTeX/texmf-dist/fonts/type1/public/lm/lmr17.pfb></home/noah/.TinyTeX/texmf-
 dist/fonts/type1/public/lm/lmri10.pfb></home/noah/.TinyTeX/texmf-dist/fonts/typ
 e1/public/lm/lmri12.pfb>
-Output written on giebink_capstone.pdf (11 pages, 4362768 bytes).
+Output written on giebink_capstone.pdf (12 pages, 4175367 bytes).
 PDF statistics:
- 189 PDF objects out of 1000 (max. 8388607)
- 158 compressed objects within 2 object streams
- 61 named destinations out of 1000 (max. 500000)
+ 194 PDF objects out of 1000 (max. 8388607)
+ 162 compressed objects within 2 object streams
+ 63 named destinations out of 1000 (max. 500000)
  28766 words of extra memory for PDF output out of 29859 (max. 10000000)
 

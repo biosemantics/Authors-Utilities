@@ -280,3 +280,10 @@ color_spaces_full <- ggarrange(color_space_full_thresholds, color_space_full_svm
 # save visualizations (already run) ----
 # ggsave('plots/final/palettes.png', palettes, width = 16, height = 10)
 # ggsave('plots/final/color_spaces_full.png', color_spaces_full, width = 10, height = 5)
+
+# save color palette csv files ----
+final_palette_svm <- colors_full_svm_lmd %>% select(-cluster)
+final_palette_thresholds <- colors_full_thresholds_lmd %>% select(-cluster)
+
+write_csv(final_palette_svm, 'data/Final_Palette-svm.csv')
+write_csv(final_palette_thresholds, 'data/Final_Palette-thresholds.csv')

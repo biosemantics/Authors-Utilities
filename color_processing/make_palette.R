@@ -127,69 +127,69 @@ yellow_brown_discards <- get_discards(rough_out$`yellow-brown`, yellow_brown)
 brown_discards <- get_discards(rough_out$brown, brown)
 
 
-# Cluster each pure color into light, medium and dark ----
+# Cluster each pure color into light, medium and dark (OLD) ----
 #' Use kmeans clustering with k=3 to label light, medium, and dark 
 #' for each pure color data frame (e.g. 'light brown', 'brown', or 'dark brown' value in new column)
-set.seed(42)
+# set.seed(42)
 
 
-km_white <- kmeans(white$L, 3) # 1 = dark, 2 = light, 3 = med
-km_green <- kmeans(green$L, 3) # 1 = dark, 2 = light, 3 = med
-km_brown <- kmeans(brown$L, 3) # 1 = dark, 2 = light, 3 = med
-km_red <- kmeans(red$L, 3) # 1 = dark, 2 = light, 3 = med
-km_yellow_green <- kmeans(yellow_green$L, 3) # 1 = dark, 2 = light, 3 = med
-km_yellow_brown <- kmeans(yellow_brown$L, 3) # 1 = dark, 2 = light, 3 = med
-
-    # yellow and purple have to few rows to warrant clustering
-
-# bind cluster value to respective color df
-white$cluster <- km_white$cluster 
-green$cluster <- km_green$cluster
-brown$cluster <- km_brown$cluster
-red$cluster <- km_red$cluster
-yellow_green$cluster <- km_yellow_green$cluster
-yellow_brown$cluster <- km_yellow_brown$cluster
-
-
-white <- white %>% arrange(desc(L))
-green <- green %>% arrange(desc(L))
-brown <- brown %>% arrange(desc(L))
-red <- red %>% arrange(desc(L))
-yellow_green <- yellow_green %>% arrange(desc(L))
-yellow_brown <- yellow_brown %>% arrange(desc(L))
+# km_white <- kmeans(white$L, 3) # 1 = dark, 2 = light, 3 = med
+# km_green <- kmeans(green$L, 3) # 1 = dark, 2 = light, 3 = med
+# km_brown <- kmeans(brown$L, 3) # 1 = dark, 2 = light, 3 = med
+# km_red <- kmeans(red$L, 3) # 1 = dark, 2 = light, 3 = med
+# km_yellow_green <- kmeans(yellow_green$L, 3) # 1 = dark, 2 = light, 3 = med
+# km_yellow_brown <- kmeans(yellow_brown$L, 3) # 1 = dark, 2 = light, 3 = med
+# 
+#     # yellow and purple have to few rows to warrant clustering
+# 
+# # bind cluster value to respective color df
+# white$cluster <- km_white$cluster 
+# green$cluster <- km_green$cluster
+# brown$cluster <- km_brown$cluster
+# red$cluster <- km_red$cluster
+# yellow_green$cluster <- km_yellow_green$cluster
+# yellow_brown$cluster <- km_yellow_brown$cluster
+# 
+# 
+# white <- white %>% arrange(desc(L))
+# green <- green %>% arrange(desc(L))
+# brown <- brown %>% arrange(desc(L))
+# red <- red %>% arrange(desc(L))
+# yellow_green <- yellow_green %>% arrange(desc(L))
+# yellow_brown <- yellow_brown %>% arrange(desc(L))
 
 # plot colors in tables using rgb data ----
 
-# separate into light, med, dark
-white_lmd <- get_lmd(white, km_white)
-white_l <- white_lmd[[1]]
-white_m <- white_lmd[[2]]
-white_d <- white_lmd[[3]]
-
-green_lmd <- get_lmd(green, km_green)
-green_l <- green_lmd[[1]]
-green_m <- green_lmd[[2]]
-green_d <- green_lmd[[3]]
-
-brown_lmd <- get_lmd(brown, km_brown)
-brown_l <- brown_lmd[[1]]
-brown_m <- brown_lmd[[2]]
-brown_d <- brown_lmd[[3]]
-
-red_lmd <- get_lmd(red, km_red)
-red_l <- red_lmd[[1]]
-red_m <- red_lmd[[2]]
-red_d <- red_lmd[[3]]
-
-yellow_green_lmd <- get_lmd(yellow_green, km_yellow_green)
-yellow_green_l <- yellow_green_lmd[[1]]
-yellow_green_m <- yellow_green_lmd[[2]]
-yellow_green_d <- yellow_green_lmd[[3]]
-
-yellow_brown_lmd <- get_lmd(yellow_brown, km_yellow_brown)
-yellow_brown_l <- yellow_brown_lmd[[1]]
-yellow_brown_m <- yellow_brown_lmd[[2]]
-yellow_brown_d <- yellow_brown_lmd[[3]]
+# # separate into light, med, dark
+# white_lmd <- get_lmd(white, km_white)
+# white_l <- white_lmd[[1]]
+# white_m <- white_lmd[[2]]
+# white_d <- white_lmd[[3]]
+# 
+# green_lmd <- get_lmd(green, km_green)
+# green_l <- green_lmd[[1]]
+# green_m <- green_lmd[[2]]
+# green_d <- green_lmd[[3]]
+# 
+# brown_lmd <- get_lmd(brown, km_brown)
+# brown_l <- brown_lmd[[1]]
+# brown_m <- brown_lmd[[2]]
+# brown_d <- brown_lmd[[3]]
+# 
+# red_lmd <- get_lmd(red, km_red)
+# red_l <- red_lmd[[1]]
+# red_m <- red_lmd[[2]]
+# red_d <- red_lmd[[3]]
+# 
+# yellow_green_lmd <- get_lmd(yellow_green, km_yellow_green)
+# yellow_green_l <- yellow_green_lmd[[1]]
+# yellow_green_m <- yellow_green_lmd[[2]]
+# yellow_green_d <- yellow_green_lmd[[3]]
+# 
+# yellow_brown_lmd <- get_lmd(yellow_brown, km_yellow_brown)
+# yellow_brown_l <- yellow_brown_lmd[[1]]
+# yellow_brown_m <- yellow_brown_lmd[[2]]
+# yellow_brown_d <- yellow_brown_lmd[[3]]
 
 
 # # get tables for light, med, dark
@@ -381,163 +381,7 @@ yellow_brown_d <- yellow_brown_lmd[[3]]
 # ggsave('plots/rgb_lum_2_b.png', rgb_lum_2_b)
 
 
-# remove mismatched colors ----
-
-# RED-GREEN AND YELLOW-BLUE THRESHOLDS ----
-
-# FULL DATA SET
-
-rg_bins <- mutate(colors_filtered, bin = if_else(a < -2, 'more green', 'more red'))
-yb_bins <- mutate(colors_filtered, bin = if_else(b < 32, 'more blue', 'more yellow'))
-
-rg_split <- ggplot(rg_bins, aes(x=a, fill=bin))+
-  geom_histogram()+
-  scale_fill_manual(values=c(centroid_color(filter(rg_bins, bin=='more green')),
-                             centroid_color(filter(rg_bins, bin=='more red'))))+
-  labs(x = 'Green-Red', y = 'Count', fill = 'Bin')+
-  theme_pubr()+
-  theme(legend.text = element_text(size=10),
-        legend.title = element_text(size=12),
-        axis.title = element_text(size = 16),
-        axis.text = element_text(size = 10)) 
-
-yb_split <- ggplot(yb_bins, aes(x=b, fill=bin))+
-  geom_histogram()+
-  scale_fill_manual(values=c(centroid_color(filter(yb_bins, bin=='more blue')),
-                             centroid_color(filter(yb_bins, bin=='more yellow'))))+
-  labs(x = 'Blue-Yellow', y = 'Count', fill = 'Bin')+
-  theme_pubr()+
-  theme(legend.text = element_text(size=10),
-        legend.title = element_text(size=12),
-        axis.title = element_text(size = 16),
-        axis.text = element_text(size = 10)) 
-
-
-# 'MORE GREEN' SIDE
-
-g_yg_bins <- filter(colors_filtered, a < -2) %>% mutate(bin = if_else(b < 32,
-                                                                      'more green',
-                                                                      'more yellow'))
-
-g_yg_split <- ggplot(g_yg_bins, aes(x=b, fill=bin))+
-  geom_histogram(binwidth = 2)+
-  scale_fill_manual(values=c(centroid_color(filter(g_yg_bins, bin=='more green')),
-                             centroid_color(filter(g_yg_bins, bin=='more yellow'))))+
-  labs(x = 'Blue-Yellow', y = 'Count', fill = 'Bin')+
-  theme_pubr()+
-  theme(legend.text = element_text(size=10),
-        legend.title = element_text(size=12),
-        axis.title = element_text(size = 16),
-        axis.text = element_text(size = 10)) 
-
-
-  # for the green-looking values to the "left" of yellow-green 
-g_yg_bins_2 <- mutate(g_yg_bins, bin = if_else(a < - 12, 'more green', 'more yellow'))
-
-g_yg_split_2 <- ggplot(g_yg_bins_2, aes(x=a, fill=bin))+
-  geom_histogram(binwidth = 2)+
-  scale_fill_manual(values=c(centroid_color(filter(g_yg_bins, bin=='more green')),
-                             centroid_color(filter(g_yg_bins, bin=='more yellow'))))+
-  labs(x = 'Green-Red', y = 'Count', fill = 'Bin')+
-  theme_pubr()+
-  theme(legend.text = element_text(size=10),
-        legend.title = element_text(size=12),
-        axis.title = element_text(size = 16),
-        axis.text = element_text(size = 10)) 
-
-
-# red vs. brown 
-
-
-rb_bins <- filter(colors_filtered, a > -2) %>% mutate(bin = if_else(a > 10, 'more red', 
-                                                                    'more brown'))
-
-rb_split <- ggplot(rb_bins, aes(x=a, fill=bin))+
-  geom_histogram()+
-  scale_fill_manual(values=c(centroid_color(filter(rb_bins, bin=='more brown')),
-                             centroid_color(filter(rb_bins, bin=='more red'))))+
-  labs(x = 'Green-Red', y = 'Count', fill = 'Bin')+
-  theme_pubr()+
-  theme(legend.text = element_text(size=10),
-        legend.title = element_text(size=12),
-        axis.title = element_text(size = 16),
-        axis.text = element_text(size = 10)) 
-
-
-  # red vs. yellow (when a > 10)
-
-ry_bins <- filter(rb_bins, bin == 'more red') %>% mutate(bin = if_else(b > 25, 'more yellow',
-                                                                       'more red'))
-
-ry_split <- ggplot(ry_bins, aes(x=b, fill=bin))+
-  geom_histogram(binwidth = 5)+
-  scale_fill_manual(values=c(centroid_color(filter(ry_bins, bin=='more red')),
-                             centroid_color(filter(ry_bins, bin=='more yellow'))))+
-  labs(x = 'Blue-Yellow', y = 'Count', fill = 'Bin')+
-  theme_pubr()+
-  theme(legend.text = element_text(size=10),
-        legend.title = element_text(size=12),
-        axis.title = element_text(size = 16),
-        axis.text = element_text(size = 10)) 
-
-
-# brown vs yellow-brown
-b_yb_bins <- filter(colors_filtered, a > -2 & a < 10) %>% mutate(bin = if_else(b < 32,
-                                                                      'more brown',
-                                                                      'more yellow'))
-
-b_yb_split <- ggplot(b_yb_bins, aes(x=b, fill=bin))+
-  geom_histogram(binwidth = 2)+
-  scale_fill_manual(values=c(centroid_color(filter(b_yb_bins, bin=='more brown')),
-                             centroid_color(filter(b_yb_bins, bin=='more yellow'))))+
-  labs(x = 'Blue-Yellow', y = 'Count', fill = 'Bin')+
-  theme_pubr()+
-  theme(legend.text = element_text(size=10),
-        legend.title = element_text(size=12),
-        axis.title = element_text(size = 16),
-        axis.text = element_text(size = 10)) 
-
-
-# INDIVIDUAL COLOR BINS
-# white
-# to appear "white"(including gray and  black), set cutoff
-# for b channel (lower values are more blue, less yellow)
-
-
-white_bins_a <- mutate(white, bin = if_else(a< -5, 'green', 
-                                            if_else(a > 0, 'brown',
-                                                    'white')))
-white_bins_b <- mutate(white, bin = if_else(b < 20, 'white', 'other'))
-
-w_split <- ggplot(white_bins_a, aes(x=a, fill=bin))+
-  geom_histogram(binwidth=2.5)+
-  scale_x_continuous(breaks = seq(-15,10,5)) +
-  scale_fill_manual(values = c(centroid_color(filter(white_bins_a, bin=='brown')),
-                              centroid_color(filter(white_bins_a, bin=='green')),
-                              centroid_color(filter(white_bins_a, bin=='white')))) +
-  labs(x = 'Green-Red', y = 'Count', fill = 'Bin')+
-  theme_pubr()+
-  theme(legend.text = element_text(size=10),
-        legend.title = element_text(size=12),
-        axis.title = element_text(size = 16),
-        axis.text = element_text(size = 10)) 
-
-wb_split <- ggplot(white_bins_b, aes(x=b, fill=bin))+
-  geom_histogram(binwidth=5)+
-  scale_x_continuous(breaks = seq(10,45,5)) +
-  scale_fill_manual(values = c(centroid_color(filter(white_bins_b, bin=='other')),
-                               centroid_color(filter(white_bins_b, bin=='white')))) +
-  labs(x = 'Blue-Yellow', y = 'Count', fill = 'Bin')+
-  theme_pubr()+
-  theme(legend.text = element_text(size=10),
-        legend.title = element_text(size=12),
-        axis.title = element_text(size = 16),
-        axis.text = element_text(size = 10)) 
-
-splits_main <- ggarrange(rg_split, yb_split, nrow=1)
-splits_brownish <- ggarrange(b_yb_split, rb_split, ry_split, nrow=1)
-splits_greenish <- ggarrange(g_yg_split, g_yg_split_2, nrow=1)
-splits_whitish <- ggarrange(w_split, wb_split, nrow = 1)
+# OLD THRESHOLDS ----
 
 # g_yg_split b
 # ry_split b
@@ -797,7 +641,7 @@ splits_whitish <- ggarrange(w_split, wb_split, nrow = 1)
 # yellow_green_d_filtered <- yellow_green %>% filter(a < -2 & b > 32 & a > -12)
 
 
-# thresholds function on all labeled colors ---- 
+# Manual thresholds on all labeled colors ---- 
 white <- white %>% mutate(label = 'white')
 brown <- brown %>% mutate(label = 'brown')
 green <- green %>% mutate(label = 'green')
@@ -807,6 +651,170 @@ yellow_green <- yellow_green %>% mutate(label = 'yellow-green')
 
 # bind together 
 colors_labeled <- bind_rows(white, brown, green, red, yellow_green, yellow_brown)
+
+# Find thresholds 
+
+# RED-GREEN AND YELLOW-BLUE THRESHOLDS 
+
+# FULL DATA SET
+
+rg_bins <- mutate(colors_labeled, bin = if_else(a < -2, 'more green', 'more red'))
+yb_bins <- mutate(colors_labeled, bin = if_else(b < 32, 'more blue', 'more yellow'))
+
+rg_split <- ggplot(rg_bins, aes(x=a, fill=bin))+
+  geom_histogram()+
+  scale_fill_manual(values=c(centroid_color(filter(rg_bins, bin=='more green')),
+                             centroid_color(filter(rg_bins, bin=='more red'))))+
+  labs(x = 'Green-Red', y = 'Count', fill = 'Bin')+
+  theme_pubr()+
+  theme(legend.text = element_text(size=10),
+        legend.title = element_text(size=12),
+        axis.title = element_text(size = 16),
+        axis.text = element_text(size = 10)) 
+
+yb_split <- ggplot(yb_bins, aes(x=b, fill=bin))+
+  geom_histogram()+
+  scale_fill_manual(values=c(centroid_color(filter(yb_bins, bin=='more blue')),
+                             centroid_color(filter(yb_bins, bin=='more yellow'))))+
+  labs(x = 'Blue-Yellow', y = 'Count', fill = 'Bin')+
+  theme_pubr()+
+  theme(legend.text = element_text(size=10),
+        legend.title = element_text(size=12),
+        axis.title = element_text(size = 16),
+        axis.text = element_text(size = 10)) 
+
+
+# 'MORE GREEN' SIDE
+
+g_yg_bins <- filter(colors_labeled, a < -2) %>% mutate(bin = if_else(b < 32,
+                                                                      'more green',
+                                                                      'more yellow'))
+
+g_yg_split <- ggplot(g_yg_bins, aes(x=b, fill=bin))+
+  geom_histogram(binwidth = 2)+
+  scale_fill_manual(values=c(centroid_color(filter(g_yg_bins, bin=='more green')),
+                             centroid_color(filter(g_yg_bins, bin=='more yellow'))))+
+  labs(x = 'Blue-Yellow', y = 'Count', fill = 'Bin')+
+  theme_pubr()+
+  theme(legend.text = element_text(size=10),
+        legend.title = element_text(size=12),
+        axis.title = element_text(size = 16),
+        axis.text = element_text(size = 10)) 
+
+
+# for the green-looking values to the "left" of yellow-green 
+g_yg_bins_2 <- mutate(g_yg_bins, bin = if_else(a < - 12, 'more green', 'more yellow'))
+
+g_yg_split_2 <- ggplot(g_yg_bins_2, aes(x=a, fill=bin))+
+  geom_histogram(binwidth = 2)+
+  scale_fill_manual(values=c(centroid_color(filter(g_yg_bins, bin=='more green')),
+                             centroid_color(filter(g_yg_bins, bin=='more yellow'))))+
+  labs(x = 'Green-Red', y = 'Count', fill = 'Bin')+
+  theme_pubr()+
+  theme(legend.text = element_text(size=10),
+        legend.title = element_text(size=12),
+        axis.title = element_text(size = 16),
+        axis.text = element_text(size = 10)) 
+
+
+# red vs. brown 
+
+
+rb_bins <- filter(colors_labeled, a > -2) %>% mutate(bin = if_else(a > 10, 'more red', 
+                                                                    'more brown'))
+
+rb_split <- ggplot(rb_bins, aes(x=a, fill=bin))+
+  geom_histogram()+
+  scale_fill_manual(values=c(centroid_color(filter(rb_bins, bin=='more brown')),
+                             centroid_color(filter(rb_bins, bin=='more red'))))+
+  labs(x = 'Green-Red', y = 'Count', fill = 'Bin')+
+  theme_pubr()+
+  theme(legend.text = element_text(size=10),
+        legend.title = element_text(size=12),
+        axis.title = element_text(size = 16),
+        axis.text = element_text(size = 10)) 
+
+
+# red vs. yellow (when a > 10)
+
+ry_bins <- filter(rb_bins, bin == 'more red') %>% mutate(bin = if_else(b > 25, 'more yellow',
+                                                                       'more red'))
+
+ry_split <- ggplot(ry_bins, aes(x=b, fill=bin))+
+  geom_histogram(binwidth = 5)+
+  scale_fill_manual(values=c(centroid_color(filter(ry_bins, bin=='more red')),
+                             centroid_color(filter(ry_bins, bin=='more yellow'))))+
+  labs(x = 'Blue-Yellow', y = 'Count', fill = 'Bin')+
+  theme_pubr()+
+  theme(legend.text = element_text(size=10),
+        legend.title = element_text(size=12),
+        axis.title = element_text(size = 16),
+        axis.text = element_text(size = 10)) 
+
+
+# brown vs yellow-brown
+b_yb_bins <- filter(colors_labeled, a > -2 & a < 10) %>% mutate(bin = if_else(b < 32,
+                                                                               'more brown',
+                                                                               'more yellow'))
+
+b_yb_split <- ggplot(b_yb_bins, aes(x=b, fill=bin))+
+  geom_histogram(binwidth = 2)+
+  scale_fill_manual(values=c(centroid_color(filter(b_yb_bins, bin=='more brown')),
+                             centroid_color(filter(b_yb_bins, bin=='more yellow'))))+
+  labs(x = 'Blue-Yellow', y = 'Count', fill = 'Bin')+
+  theme_pubr()+
+  theme(legend.text = element_text(size=10),
+        legend.title = element_text(size=12),
+        axis.title = element_text(size = 16),
+        axis.text = element_text(size = 10)) 
+
+
+# INDIVIDUAL COLOR BINS
+# white
+# to appear "white"(including gray and  black), set cutoff
+# for b channel (lower values are more blue, less yellow)
+
+
+white_bins_a <- mutate(white, bin = if_else(a< -5, 'green', 
+                                            if_else(a > 0, 'brown',
+                                                    'white')))
+white_bins_b <- mutate(white, bin = if_else(b < 20, 'white', 'other'))
+
+w_split <- ggplot(white_bins_a, aes(x=a, fill=bin))+
+  geom_histogram(binwidth=2.5)+
+  scale_x_continuous(breaks = seq(-15,10,5)) +
+  scale_fill_manual(values = c(centroid_color(filter(white_bins_a, bin=='brown')),
+                               centroid_color(filter(white_bins_a, bin=='green')),
+                               centroid_color(filter(white_bins_a, bin=='white')))) +
+  labs(x = 'Green-Red', y = 'Count', fill = 'Bin')+
+  theme_pubr()+
+  theme(legend.text = element_text(size=10),
+        legend.title = element_text(size=12),
+        axis.title = element_text(size = 16),
+        axis.text = element_text(size = 10)) 
+
+wb_split <- ggplot(white_bins_b, aes(x=b, fill=bin))+
+  geom_histogram(binwidth=5)+
+  scale_x_continuous(breaks = seq(10,45,5)) +
+  scale_fill_manual(values = c(centroid_color(filter(white_bins_b, bin=='other')),
+                               centroid_color(filter(white_bins_b, bin=='white')))) +
+  labs(x = 'Blue-Yellow', y = 'Count', fill = 'Bin')+
+  theme_pubr()+
+  theme(legend.text = element_text(size=10),
+        legend.title = element_text(size=12),
+        axis.title = element_text(size = 16),
+        axis.text = element_text(size = 10)) 
+
+splits_main <- ggarrange(rg_split, yb_split, nrow=1)
+splits_brownish <- ggarrange(b_yb_split, rb_split, ry_split, nrow=1)
+splits_greenish <- ggarrange(g_yg_split, g_yg_split_2, nrow=1)
+splits_whitish <- ggarrange(w_split, wb_split, nrow = 1)
+
+
+
+
+
+# split using thresholds function
 colors_labeled <- thresholds(colors_labeled)
 
 colors_labeled$label <- as.factor(colors_labeled$label)
@@ -1206,7 +1214,7 @@ color_test_plot <- ggplot(color_test, aes(x = label, y = proportion, fill = colo
 # ggsave('plots/final/splits_greenish.png', splits_greenish, width = 10, height = 5)
 # ggsave('plots/final/splits_whitish.png', splits_whitish, width = 10, height = 5)
 # ggsave('plots/final/rgb_axis_distributions.png', rgb_box, width = 5, height = 5)
-# ggsave('plots/final/spaces_rgb_vs_lab.png', spaces, width = 10, height = 15)
+# ggsave('plots/final/spaces_rgb_vs_lab.png', spaces, width = 10, height = 12)
 # ggsave('plots/final/label_vs_color.png', label_test_plot, width = 10, height = 5)
 
 
