@@ -7,20 +7,6 @@ source('palette_functions.R')
 
 # prep data ----
 
-# for param: measurements
-# measurements <- read_excel_allsheets('data/colour_between_species_2020Dec04.xlsm')
-# 
-# # all colors data set
-# # select only relevant columns
-# colors_all <- unique_id(measurements) %>% select(Species, Red, Green, Blue, id)
-# 
-# # calculate Lab space features
-# Lab_features <- convertColor(colors_all[2:4], 'sRGB', 'Lab', scale.in = 255)
-# colors_all <- cbind(colors_all, Lab_features)
-# 
-# # apply thresholds function to label colors 
-# colors_all <- thresholds(colors_all)
-
 # read in data 
 measurements <- read_excel_allsheets('data/colour_between_species_2020Dec04.xlsm')
 
